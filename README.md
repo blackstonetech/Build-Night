@@ -10,3 +10,6 @@ Cal Ender
 
 Big Ben
 * Clock syncs with Outlook calendars and alerts individuals of their upcoming meetings
+
+House Cup
+* Use Hogwartz houses in some fashion
