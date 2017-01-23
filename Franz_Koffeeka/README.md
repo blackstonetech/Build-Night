@@ -1,11 +1,11 @@
 # Franz Koffeeka
 
-## IoT Project - Monitor the Office Coffee Pot
+## Inernet of Coffee Project - Monitor the Office Coffee Pot
 
 ![imgCPR][img CoffeeRobot]
 ## Build Night Wednesday 01/25/2017 5pm
 
-Come join the BTG OCTO Engineering team in an attempt to hack together an Internet of Things experiment!!!
+Come join us in an attempt to hack together an Internet of Things experiment!!!
 
 ### Objective:
   Monitor the state of the Office Coffee Maker:
