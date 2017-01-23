@@ -24,12 +24,53 @@ Teams will work on different aspects of the project such as teams coding and tes
 
 ![imgCIC][img Coffee IoT Concepts]
 
+## Advance Preparation
+A few articles are listed below to get you going if you are not familiar with the Arduino or Raspberry Pi platforms.
+
+You may want to use the info in the intro articles to install the Arduino IDE and/or the tools needed to access the Raspberry Pi on your laptop prior to arriving.
+
+### Arduino Reading:
+- Intro https://learn.adafruit.com/ladyadas-learn-arduino-lesson-number-1
+- Multi-tasking https://learn.adafruit.com/multi-tasking-the-arduino-part-1
+- MQTT (pub/sub):  https://learn.adafruit.com/diy-esp8266-home-security-with-lua-and-mqtt
+
+
+### Raspberry Pi Reading:
+- Intro https://www.raspberrypi.org/forums/viewtopic.php?t=4751
+- SSH https://tutorials-raspberrypi.com/raspberry-pi-remote-access-by-using-ssh-and-putty/
+- MQTT (pub/sub) https://learn.adafruit.com/diy-esp8266-home-security-with-lua-and-mqtt/configuring-mqtt-on-the-raspberry-pi
+
 
 ## Supplies Details
 ### Arduino Feather and Accessories
 Adafruit Feather HUZZAH with ESP8266 WiFi
  Tutorials: [[http://www.adafruit.com/products/2821#tutorials]]
 Microsoft Azure IoT Starter Kit w/ Adafruit Feather HUZZAH
+This kit includes:
+```
+x Assembled Adafruit Feather HUZZAH ESP8266 WiFi
+1x Micro Servo
+1x PIR (motion) Sensor
+1x USB Cable - A/Micro B
+1x Fast Vibration Switch
+1x Magnetic Contact Switch (door sensor)
+1x Half-sized Breadboard
+1x Premium Male/Male Jumper Wires - 40 x 6"
+1x Magnetic Contact Switch (door sensor)
+1x DHT22 Temperature-humidity Sensor + Extras
+Component bag containing:
+
+3x 12mm Tactile Switches
+1x Breadboard Trim Potentiometer 10K
+1x Diffused 10mm Green LED
+1x Diffused 10mm Red LED
+5x 10K 5% 1/4W Resistor
+5x 560 Ohm 5% 1/4W Resistor
+1x Piezo Buzzer
+1x Photo Cell Light Sensor
+1x Diffused RGB (tri-color) LED
+1x Breadboard-friendly SPDT Slide Switch
+```
  Tutorials: [[http://www.adafruit.com/products/3032#tutorials]]
 Melexis Contact-less Infrared Sensor - MLX90614 5V
  Tutorials: [[http://www.adafruit.com/products/1748#tutorials]]
@@ -73,4 +114,4 @@ https://smile.amazon.com/gp/product/B00NPZ4CPG/ref=od_aui_detailpages01?ie=UTF8&
 
 
 [img CoffeeRobot]:coffeerobot.png "Coffee Robot"
-[img Coffee IoT Concepts]:coffeeIoTBoard1.png "Coffee IoT Concepts"
+[img Coffee IoT Concepts]:coffeeIoTBoard5.png "Coffee IoT Concepts"
