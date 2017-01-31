@@ -2,4 +2,4 @@
 
 ## Internet of Coffee Project - Monitor the Office Coffee Pot
 
-### publish - code for message publishing (runs on Arduino)
+### subscribe - code for message subscribing (runs on Rasberry Pi)
