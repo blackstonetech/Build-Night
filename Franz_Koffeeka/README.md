@@ -1,6 +1,6 @@
 # Franz Koffeeka
 
-## Inernet of Coffee Project - Monitor the Office Coffee Pot
+## Internet of Coffee Project - Monitor the Office Coffee Pot
 
 ![imgCPR][img CoffeeRobot]
 ## Build Night Wednesday 01/25/2017 5pm
