@@ -58,14 +58,21 @@ void loop() {
   // function definition further below.
   MQTT_connect();
 
+  // Blank string to add sensor values.
   string publishValue = "";
 
+  // Concatentate temperature sensor.
   float temperature = tempSensor();
   publishValue += temperature.str();
 
+  // Sensor separation value.
+  publishValue += "|";
+
+  // Concatentate light sensor.
   float light = lightSensor();
   publishValue += light.str();
-  
+
+  // Publish the sensor information following the string format requested by the display group.
   if (! coffeePublish.publish(publishValue)) {
     Serial.println(F("Failed"));
   } else {
@@ -89,10 +96,11 @@ float tempSensor() {
   // Temperature Sensor
   float tempObject = mlx.readObjectTempC();
 
+  // Publish temperature data.
   Serial.print("Temperature Sensor: ");
   Serial.print(tempObject);
 
-  retrun tempObject;
+  return tempObject;
 }
 
 
