@@ -18,7 +18,7 @@ Come join us in an attempt to hack together an Internet of Things experiment!!!
 * Arduino based Feather microcomputers with WiFi
 * Various Sensors
 * Rasberry Pi
-* 16x16 "pixel" display panel
+* 32x32 "pixel" display panels
 
 Teams will work on different aspects of the project such as teams coding and testing sensors, team coding storage of data, team managing retrieval and display of data.
 
@@ -109,7 +109,7 @@ https://smile.amazon.com/gp/product/B00NPZ4CPG/ref=od_aui_detailpages01?ie=UTF8&
 ### Rasberry Pi and Accessories
 * 1x Rasberry Pi 3 model B
   * Add-on board for Video display
-* 4x 16x16 video array boards (can be joined to quad display)
+* 4x 32x32 video array boards (can be joined to quad display)
 * 1x Rasberry Pi 2 (for testing)   
 
 
