@@ -5,9 +5,11 @@ Blackstone Internet of Coffee Pub Sub Program
 #include <ESP8266WiFi.h>
 #include "Adafruit_MQTT.h"
 #include "Adafruit_MQTT_Client.h"
+
 /************** Temperature Sensor ***************/
 #include "Adafruit_MLX90614.h"
 Adafruit_MLX90614 mlx = Adafruit_MLX90614();
+
 /************************* WiFi Access Point *********************************/
 #define WLAN_SSID       "IOCOFFEE"
 #define WLAN_PASS       ""
@@ -16,17 +18,19 @@ Adafruit_MLX90614 mlx = Adafruit_MLX90614();
 #define AIO_SERVERPORT  1883                   // use 8883 for SSL
 #define AIO_USERNAME    ""
 #define AIO_KEY         ""
-/************ Global State (you don't need to change this!) ******************/
+
 // ESP8266 WiFiClient to connect to the MQTT server.
 WiFiClient client;
 // or... use WiFiFlientSecure for SSL
 //WiFiClientSecure client;
+
 // Setup the MQTT client class by passing in the WiFi client and MQTT server and login details.
 Adafruit_MQTT_Client mqtt(&client, AIO_SERVER, AIO_SERVERPORT, AIO_USERNAME, AIO_KEY);
 /****************************** Feeds ***************************************/
 Adafruit_MQTT_Publish coffeePublish = Adafruit_MQTT_Publish(&mqtt, "/topic/coffee");
-/*************************** Sketch Code ************************************/
+
 void MQTT_connect();
+
 /**************************** WiFi Setup ************************************/
 void setup() {
   Serial.begin(115200);
@@ -46,30 +50,28 @@ void setup() {
     // Input from MLX
   mlx.begin();
 }
-float x=0;
+
+/**************************** Publish Loop ************************************/
 void loop() {
   // Ensure the connection to the MQTT server is alive (this will make the first
   // connection and automatically reconnect when disconnected).  See the MQTT_connect
   // function definition further below.
   MQTT_connect();
-  // Analog Input from Light Sensor
-  int pin = A0;
-  x = analogRead(pin);
-  // Temperature Sensor
-  float tempObject = mlx.readObjectTempC();
 
-  // Now we can publish stuff!
-  Serial.print(F("\nSending sensor values: "));
-  Serial.print("Light Sensor: ");
-  Serial.print(x);
-  Serial.print("Temperature Sensor: ");
-  Serial.print(tempObject);
+  string publishValue = "";
 
-  if (! coffeePublish.publish(x)) {
+  float temperature = tempSensor();
+  publishValue += temperature.str();
+
+  float light = lightSensor();
+  publishValue += light.str();
+  
+  if (! coffeePublish.publish(publishValue)) {
     Serial.println(F("Failed"));
   } else {
     Serial.println(F("OK!"));
   }
+
   // ping the server to keep the mqtt connection alive
   // NOT required if you are publishing once every KEEPALIVE seconds
   /*
@@ -77,9 +79,38 @@ void loop() {
     mqtt.disconnect();
   }
   */
-  x=x+.01;
+
+  // Delay between publish sequences
   delay(1000);
 }
+
+/**************************** Temperature Sensor Publish ************************************/
+float tempSensor() {
+  // Temperature Sensor
+  float tempObject = mlx.readObjectTempC();
+
+  Serial.print("Temperature Sensor: ");
+  Serial.print(tempObject);
+
+  retrun tempObject;
+}
+
+
+/**************************** Light Sensor Publish ************************************/
+int lightSensor() {
+  // Analog Input from Light Sensor
+  int pin = A0;
+  float lightRead = analogRead(pin);
+
+  // Now we can publish stuff!
+  Serial.print(F("\nSending sensor values: "));
+  Serial.print("Light Sensor: ");
+  Serial.print(lightRead);
+
+  return lightRead;
+}
+
+/**************************** Server Connection ************************************/
 // Function to connect and reconnect as necessary to the MQTT server.
 // Should be called in the loop function and it will take care if connecting.
 void MQTT_connect() {
