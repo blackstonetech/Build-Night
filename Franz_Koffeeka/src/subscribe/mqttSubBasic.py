@@ -12,10 +12,10 @@ def on_connect(client, userdata, flags, rc):
 def on_message(client, userdata, msg):
   epochtime = time.time()
   rawmessage = str(msg.payload.decode("utf-8"))
-#  quality = rawmessage[0]  ### Determined by age of coffee
-#  brewing = rawmessage[0]
-#  strength = rawmessage[2:4]
-#  level = rawmessage[6]
+  quality = 0 #rawmessage[0]  ### Determined by age of coffee
+  brewing = rawmessage[2]
+  strength = rawmessage[4:5]
+  level = rawmessage[6]
 #  if brewing == "t":
 #    print("It's brewing!")
 #    lastbrew = str(epochtime)
