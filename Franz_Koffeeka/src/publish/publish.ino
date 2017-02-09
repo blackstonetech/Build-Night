@@ -5,6 +5,9 @@ Blackstone Internet of Coffee Pub Sub Program
 #include <ESP8266WiFi.h>
 #include "Adafruit_MQTT.h"
 #include "Adafruit_MQTT_Client.h"
+#include <Wire.h>
+#include "Adafruit_TCS34725.h"
+
 
 /************** Temperature Sensor ***************/
 #include "Adafruit_MLX90614.h"
@@ -119,6 +122,23 @@ float dhtSensor() {
   float h = dht.readHumidity();
 
   return h;
+}
+
+/**************************** RGB Sensor Publish ************************************/
+int rgbSensor() {
+  // Analog Input from RGB Sensor
+  int coffeeStrength = 0;
+  uint16_t r, g, b, c, colorTemp, lux;
+  tcs.getRawData(&r, &g, &b, &c);
+    
+  if(( c > 600) && ( c < 710 )){
+    coffeeStrength = 1;}
+  else if (( c > 710 ) && ( c < 900 )){
+    coffeeStrength = 2;}
+  else{
+    coffeeStrength = 0;}
+    
+  return coffeeStrength;
 }
 
 /**************************** Server Connection ************************************/
