@@ -10,9 +10,16 @@ Blackstone Internet of Coffee Pub Sub Program
 #include "Adafruit_MLX90614.h"
 Adafruit_MLX90614 mlx = Adafruit_MLX90614();
 
+/************** DHT TempHumidity Sensor ***************/
+#include "DHT.h"
+#define DHTPIN 2     // what digital pin we're connected to
+#define DHTTYPE DHT22   // DHT 22  (AM2302), AM2321
+DHT dht(DHTPIN, DHTTYPE);
+
 /************************* WiFi Access Point *********************************/
 #define WLAN_SSID       "IOCOFFEE"
 #define WLAN_PASS       ""
+
 /************************* MQTT Server Setup *********************************/
 #define AIO_SERVER      "192.168.10.2"
 #define AIO_SERVERPORT  1883                   // use 8883 for SSL
@@ -64,7 +71,9 @@ void loop() {
   // Concatentate light sensor.
   float light = lightSensor();
 
-  String data = String(temperature) + "|" + String(light);
+  float humidity = dhtSensor();
+  
+  String data = String(humidity);
 
   // Publish the sensor information following the string format requested by the display group.
   if (! coffeePublish.publish(data.c_str())) {
@@ -90,10 +99,6 @@ float tempSensor() {
   // Temperature Sensor
   float tempObject = mlx.readObjectTempC();
 
-  // Publish temperature data.
-  Serial.print("Temperature Sensor: ");
-  Serial.print(tempObject);
-
   return tempObject;
 }
 
@@ -104,12 +109,16 @@ int lightSensor() {
   int pin = A0;
   float lightRead = analogRead(pin);
 
-  // Now we can publish stuff!
-  Serial.print(F("\nSending sensor values: "));
-  Serial.print("Light Sensor: ");
-  Serial.print(lightRead);
-
   return lightRead;
+}
+
+/**************************** Humidity Sensor Publish ************************************/
+float dhtSensor() {
+  // DHT temperature and humidity sensor values
+  // Read humidity
+  float h = dht.readHumidity();
+
+  return h;
 }
 
 /**************************** Server Connection ************************************/
