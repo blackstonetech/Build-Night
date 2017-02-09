@@ -25,7 +25,7 @@ def on_message(client, userdata, msg):
 
   iocinput = (str(epochtime) + "|" + str(quality) + "|" + str(msg.payload.decode("utf-8")))
 #  iocinput = str(epochtime) + "|" + str(lastbrew) + "|" + quality + "|" + brewing + "|" + strength + "|" + level
-  print(msg.topic + " | " + str(msg.payload.decode("utf-8")))
+  print(msg.topic + "|" + str(quality) + "|" + str(msg.payload.decode("utf-8")))
   filepath = os.path.join('/home/pi', 'coffee.log')
   with open(filepath, "a") as f:
     f.write(str((iocinput) + '\n'))
