@@ -13,9 +13,9 @@ def on_message(client, userdata, msg):
   epochtime = time.time()
   rawmessage = str(msg.payload.decode("utf-8"))
   quality = 0 #rawmessage[0]  ### Determined by age of coffee
-  brewing = rawmessage[2]
-  strength = rawmessage[4:5]
-  level = rawmessage[6]
+#  brewing = rawmessage[2]
+#  strength = rawmessage[4:5]
+#  level = rawmessage[6]
 #  if brewing == "t":
 #    print("It's brewing!")
 #    lastbrew = str(epochtime)
@@ -23,7 +23,7 @@ def on_message(client, userdata, msg):
 #     print("It's not brewing")
 #    lastbrew = lastbrew
 
-  iocinput = (str(epochtime) + "|" + str(msg.payload.decode("utf-8")))
+  iocinput = (str(epochtime) + "|" + str(quality) + "|" + str(msg.payload.decode("utf-8")))
 #  iocinput = str(epochtime) + "|" + str(lastbrew) + "|" + quality + "|" + brewing + "|" + strength + "|" + level
   print(msg.topic + " | " + str(msg.payload.decode("utf-8")))
   filepath = os.path.join('/home/pi', 'coffee.log')
