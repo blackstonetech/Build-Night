@@ -43,6 +43,9 @@ DHT dht(DHTPIN, DHTTYPE);
 #define SENSORPIN50 12
 #define SENSORPIN25 13
 
+/************** TCS Sensor Inputs ***************/
+Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_700MS, TCS34725_GAIN_1X);
+
 /************** Variables for reading the pushbutton status ***************/
 int sensorState3 = 0;         
 int sensorState2 = 0;         
@@ -89,6 +92,7 @@ void loop() {
   int level = irSensorBreak();
   
   String data = String(brewing) + "|" + String(strength) + "|" + String(level);
+  Serial.println(data);
 
   // Publish the sensor information following the string format requested by the display group.
  if (! coffeePublish.publish(data.c_str())) {
