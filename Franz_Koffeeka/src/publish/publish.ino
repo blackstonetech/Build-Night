@@ -14,7 +14,7 @@ Adafruit_MLX90614 mlx = Adafruit_MLX90614();
 #define WLAN_SSID       "IOCOFFEE"
 #define WLAN_PASS       ""
 /************************* MQTT Server Setup *********************************/
-#define AIO_SERVER      "192.168.10.6"
+#define AIO_SERVER      "192.168.10.2"
 #define AIO_SERVERPORT  1883                   // use 8883 for SSL
 #define AIO_USERNAME    ""
 #define AIO_KEY         ""
@@ -58,22 +58,16 @@ void loop() {
   // function definition further below.
   MQTT_connect();
 
-  // Blank string to add sensor values.
-  string publishValue = "";
-
   // Concatentate temperature sensor.
   float temperature = tempSensor();
-  publishValue += temperature.str();
-
-  // Sensor separation value.
-  publishValue += "|";
 
   // Concatentate light sensor.
   float light = lightSensor();
-  publishValue += light.str();
+
+  String data = String(temperature) + "|" + String(light);
 
   // Publish the sensor information following the string format requested by the display group.
-  if (! coffeePublish.publish(publishValue)) {
+  if (! coffeePublish.publish(data.c_str())) {
     Serial.println(F("Failed"));
   } else {
     Serial.println(F("OK!"));
