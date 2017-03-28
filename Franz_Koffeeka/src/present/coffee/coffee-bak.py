@@ -8,13 +8,12 @@ from optparse import OptionParser
 
 SLEEP_INTERVAL = 1.0
 IDLE_LOOP_MAX = 5
-IMAGE_DISPLAY_DURATION = 2.0
 
 #TODO: replace with args
-CSV_FILE_PATH = '/home/pi'
-CSV_FILE_NAME = 'IoCoffee.csv'
-CSV_FILE_PATH_TEST = '/home/pi/Federal-IoT/Franz_Koffeeka/src/present/coffee'
-CSV_FILE_NAME_TEST = 'testdata.csv'
+# CSV_FILE_PATH = '/home/pi'
+# CSV_FILE_NAME = 'IoCoffee.csv'
+CSV_FILE_PATH = '/home/pi/Federal-IoT/Franz_Koffeeka/src/present/coffee'
+CSV_FILE_NAME = 'testdata.csv'
 
 # myfile = "/home/pi/Federal-IoT/Franz_Koffeeka/src/present/coffee/testdata.txt"
 imgfilepath = "/home/pi/Federal-IoT/Franz_Koffeeka/src/present/Coffee Images/CoffeeExport/"
@@ -29,6 +28,35 @@ matrix = Adafruit_RGBmatrix(32, 2)
 
 #TODO add a switch where it will replay the file and then start tailing, otherwise, just pass until last line and wait on tail
 
+
+
+# def readlines_then_tail(fin):
+def readlines_then_tail(line):
+    "Iterate through lines and then tail for further lines."
+    while True:
+#        line = fin.readline()
+#        line = next(fin)
+        print("next line==>" + str(line) + "<==")
+        if line:
+            yield line
+        else:
+            
+            tail(fin)
+
+def tail(fin):
+    "Listen for new lines added to file."
+    print("in tail")
+    while True:
+        where = fin.tell()
+#        line = fin.readline()
+        print("in loop, where :" + str(where))
+        line = next(fin)
+        print("tail next line==>" + str(line) + "<==")
+        if not line:
+            time.sleep(SLEEP_INTERVAL)
+            fin.seek(where)
+        else:
+            yield line
 
 ##  Right panel shows coffee pot level:
 ##     empty (0) - empty, red (1) - low, yellow (2) - half, green (3) - full
@@ -98,10 +126,11 @@ def presentStatus(row):
              rimage = Image.open(right_imagefile)
              rimage.load()          # Must do this before SetImage() calls
              matrix.SetImage(rimage.im.id, 33, 0)
-         time.sleep(IMAGE_DISPLAY_DURATION)
+         time.sleep(4.0)
 
 
 def main():
+    print("here")
 ## Not handling file name and quiet yet
     parser = OptionParser("usage: coffee.py [--file=filename [--quiet] [--test]")
     parser.add_option("-f", "--file", dest="csvfilename",
@@ -115,27 +144,38 @@ def main():
 
     (options, args) = parser.parse_args()
 
-    if options.testmode:
-        print("test mode active")
-        csvFile = os.path.join(CSV_FILE_PATH_TEST, CSV_FILE_NAME_TEST)
-    else:
-        csvFile = os.path.join(CSV_FILE_PATH, CSV_FILE_NAME)
+#    p = OptionParser("usage: coffee.py [--test]")
+#    (options, args) = p.parse_args()
+#    if len(args) < 1:
+#        p.error("must specify a file to watch")
+
+    csvFile = os.path.join(CSV_FILE_PATH, CSV_FILE_NAME)
 
     fieldnames = ['epoch_time', 'last_brew_time', 'quality', 'brewing', 'strength', 'level']
 
+##    with open(csvFile, 'rb') as csvfile:
+##         reader = csv.DictReader(csvfile,delimiter='|', fieldnames=fieldnames, restval='n')
+##         for row in reader:
+##             print(row)
+###         epochtime = time.strftime('%Y-%m-%d %H:%M:%S', float(row['epoch_time']))
+##             print(row['epoch_time'], row['last_brew_time'], row['quality'],row['brewing'],row['strength'],row['level'])
+###         print(epoch_time, row['last_brew_time'], row['quality'],row['brewing'],row['strength'],row['level'])
+### note may work to get it off a string var: for row in csv.reader(['one,two,three']):
+#    with open(args[0], 'r') as fin:
+    print("here")
     with open(csvFile, 'r') as fin:
-#        reader = csv.DictReader(fin, delimiter='|', fieldnames=fieldnames, restval='n')
-        reader = csv.reader(fin, delimiter='|')
+        reader = csv.DictReader(fin, delimiter='|', fieldnames=fieldnames, restval='n')
         for line in reader:
-            row = dict(zip(fieldnames, line))
             print("read line==>" + str(line) + "<== #" + str(reader.line_num) )
             if options.testmode:
                 print("test line==>" + str(line) + "<== #" + str(reader.line_num) )
-                presentStatus(row)
+                presentStatus(line)
             else:
+# do this once working                tail(fin)
                 print("skipping line==>" + str(line) + "<==")
-
-#       "Listen for new lines added to file."
+##                presentStatus(line)
+    ##    tail(fin)
+        "Listen for new lines added to file."
         print("in tail loop")
         hold_line_num = reader.line_num
         loop_count = 0
@@ -144,25 +184,25 @@ def main():
                 print("Idle too long - exiting!")
                 break
            
-            where = fin.tell()
-            line = fin.readline()
-            if not line:
-                print("in wait loop on line #" + str(reader.line_num))
+#            where = fin.tell()
+#        line = fin.readline()
+            print("in wait loop on line #" + str(reader.line_num))
+            try:
+                line = next(reader)
+            except StopIteration:
+                print("stopiteration")
                 time.sleep(SLEEP_INTERVAL)
                 loop_count += 1
                 continue
 
-            fin.seek(where)
-            line = next(reader)
-            row = dict(zip(fieldnames, line))
-
+        # line = next(fin)
             print("next line==>" + str(line) + "<== #" + str(reader.line_num) )
-            print("next row==>" + str(row) + "<== #" + str(reader.line_num) )
             if reader.line_num == hold_line_num :
                 time.sleep(SLEEP_INTERVAL)
                 loop_count += 1
+#                fin.seek(where)
             else:
-                presentStatus(row)
+                presentStatus(line)
                 hold_line_num = reader.line_num
                 loop_count = 0
                 
@@ -170,8 +210,7 @@ def main():
 if __name__ == '__main__':
     main()
 
-##### Holding on to some other attempts at code before clean-up. Delete for production ####
-
+##### Hold some old code before clean-up. Delete for production ####
 ##def main():
 ##    print("here")
 ##    p = OptionParser("usage: tail.py file")
@@ -279,54 +318,4 @@ if __name__ == '__main__':
 #time.sleep(10.0)
 #matrix.Clear()
 
-##    with open(csvFile, 'rb') as csvfile:
-##         reader = csv.DictReader(csvfile,delimiter='|', fieldnames=fieldnames, restval='n')
-##         for row in reader:
-##             print(row)
-###         epochtime = time.strftime('%Y-%m-%d %H:%M:%S', float(row['epoch_time']))
-##             print(row['epoch_time'], row['last_brew_time'], row['quality'],row['brewing'],row['strength'],row['level'])
-###         print(epoch_time, row['last_brew_time'], row['quality'],row['brewing'],row['strength'],row['level'])
-### note may work to get it off a string var: for row in csv.reader(['one,two,three']):
-#    with open(args[0], 'r') as fin:
-##    print("here")
-##    epoch_timeIndex = fieldnames.index("epoch_time")
-##    last_brew_timeIndex = fieldnames.index("last_brew_time")
-##    qualityIndex = fieldnames.index("quality")
-##    brewingIndex = fieldnames.index("brewing")
-##    strengthIndex = fieldnames.index("strength")
-##    levelIndex = fieldnames.index("level")
-
-##            try:
-##                line = next(reader)
-##            except StopIteration:
-##                print("stopiteration")
-
-### def readlines_then_tail(fin):
-##def readlines_then_tail(line):
-##    "Iterate through lines and then tail for further lines."
-##    while True:
-###        line = fin.readline()
-###        line = next(fin)
-##        print("next line==>" + str(line) + "<==")
-##        if line:
-##            yield line
-##        else:
-##            
-##            tail(fin)
-##
-##def tail(fin):
-##    "Listen for new lines added to file."
-##    print("in tail")
-##    while True:
-##        where = fin.tell()
-###        line = fin.readline()
-##        print("in loop, where :" + str(where))
-##        line = next(fin)
-##        print("tail next line==>" + str(line) + "<==")
-##        if not line:
-##            time.sleep(SLEEP_INTERVAL)
-##            fin.seek(where)
-##        else:
-##            yield line
-##
 
