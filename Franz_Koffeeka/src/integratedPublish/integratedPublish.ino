@@ -14,10 +14,10 @@ Blackstone Internet of Coffee Pub Sub Program
 Adafruit_MLX90614 mlx = Adafruit_MLX90614();
 
 /************************* WiFi Access Point *********************************/
-#define WLAN_SSID       "IOCOFFEE"
-#define WLAN_PASS       ""
+#define WLAN_SSID       "BTGDCguest"
+#define WLAN_PASS       "Black$tone45"
 /************************* MQTT Server Setup *********************************/
-#define AIO_SERVER      "192.168.10.2"
+#define AIO_SERVER      "192.168.3.82"
 #define AIO_SERVERPORT  1883                   // use 8883 for SSL
 #define AIO_USERNAME    ""
 #define AIO_KEY         ""
