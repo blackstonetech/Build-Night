@@ -31,7 +31,7 @@ matrix = Adafruit_RGBmatrix(32, 2)
 
 
 ##  Right panel shows coffee pot level:
-##     empty (0) - empty, red (1) - low, yellow (2) - half, green (3) - full
+##     empty (3) - empty, red (2) - low, yellow (1) - half, green (0) - full
 ##   and strength: 0 - no drip, 1 - left drip, 2 - right drip, 3 - both drips
 ##  Left panel shows brewing status. Stays dark with no brewing active right now.
 ##    Later it could show last brew time maybe...
@@ -48,10 +48,10 @@ def presentStatus(row):
     right_image.insert(3,'None')
     print(left_image[0])
 
-    # if  row['brewing'] == 't':
-        # left_image[0] = 'Brewing_Pink.png'
-        # left_image[1] = 'Black.png'
-        # left_image[2] = 'Brewing.png'
+    if  row['brewing'] == 't':
+        left_image[0] = 'Brewing_Pink.png'
+        left_image[1] = 'Black.png'
+        left_image[2] = 'Brewing.png'
 
     if row['level'] == '0':
         if row['strength'] == '0':
