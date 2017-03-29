@@ -40,12 +40,12 @@ matrix = Adafruit_RGBmatrix(32, 2)
 ## Another enhancement is to let drips build up to strength with each image display
 
 def presentStatus(row):
+    left_image.insert(0,'Black.png')
     left_image.insert(1,'Black.png')
     left_image.insert(2,'Black.png')
-    left_image.insert(3,'Black.png')
-    right_image.insert(1,'Black.png')
+    right_image.insert(0,'Black.png')
+    right_image.insert(1,'None')
     right_image.insert(2,'None')
-    right_image.insert(3,'None')
     print(left_image[0])
 
     if  row['brewing'] == 't':
