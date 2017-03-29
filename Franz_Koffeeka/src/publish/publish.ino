@@ -20,8 +20,8 @@ Adafruit_MLX90614 mlx = Adafruit_MLX90614();
 DHT dht(DHTPIN, DHTTYPE);
 
 /************************* WiFi Access Point *********************************/
-#define WLAN_SSID       "IOCOFFEE"
-#define WLAN_PASS       ""
+#define WLAN_SSID       "BTGDCguest"
+#define WLAN_PASS       "Black$tone45"
 
 /************************* MQTT Server Setup *********************************/
 #define AIO_SERVER      "192.168.10.2"
