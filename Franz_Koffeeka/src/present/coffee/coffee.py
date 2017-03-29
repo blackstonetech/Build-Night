@@ -48,10 +48,10 @@ def presentStatus(row):
     right_image.insert(3,'None')
     print(left_image[0])
 
-    if  row['brewing'] == 't':
-        left_image[0] = 'Brewing_Pink.png'
-        left_image[1] = 'Black.png'
-        left_image[2] = 'Brewing.png'
+    # if  row['brewing'] == 't':
+        # left_image[0] = 'Brewing_Pink.png'
+        # left_image[1] = 'Black.png'
+        # left_image[2] = 'Brewing.png'
 
     if row['level'] == '0':
         if row['strength'] == '0':
