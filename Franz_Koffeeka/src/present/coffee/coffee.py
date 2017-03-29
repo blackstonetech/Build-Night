@@ -53,28 +53,28 @@ def presentStatus(row):
         left_image[1] = 'Black.png'
         left_image[2] = 'Brewing.png'
 
-    if row['level'] == '0':
+    if row['level'] == '3':
         if row['strength'] == '0':
             right_image[0] = 'Empty_0.png'
         elif row['strength'] == '1':
             right_image[0] = 'Empty_1.png'
         elif row['strength'] == '2':
             right_image[0] = 'Empty_2.png'
-    elif row['level'] == '1':
+    elif row['level'] == '2':
         if row['strength'] == '0':
             right_image[0] = 'Red_0.png'
         elif row['strength'] == '1':
             right_image[0] = 'Red_1.png'
         elif row['strength'] == '2':
             right_image[0] = 'Red_2.png'
-    elif row['level'] == '2':
+    elif row['level'] == '1':
         if row['strength'] == '0':
             right_image[0] = 'Yellow_0.png'
         elif row['strength'] == '1':
             right_image[0] = 'Yellow_1.png'
         elif row['strength'] == '2':
             right_image[0] = 'Yellow_2.png'
-    elif row['level'] == '3':
+    elif row['level'] == '0':
         if row['strength'] == '0':
             right_image[0] = 'Green_0.png'
         elif row['strength'] == '1':
