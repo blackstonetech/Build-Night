@@ -10,6 +10,9 @@ SLEEP_INTERVAL = 1.0
 IDLE_LOOP_MAX = 5
 IMAGE_DISPLAY_DURATION = 2.0
 
+IMAGE_BLACK = 'Black.png'
+IMAGE_NONE = 'None'
+
 #TODO: replace with args
 CSV_FILE_PATH = '/home/pi'
 CSV_FILE_NAME = 'IoCoffee.csv'
@@ -18,8 +21,9 @@ CSV_FILE_NAME_TEST = 'testdata.csv'
 
 # myfile = "/home/pi/Federal-IoT/Franz_Koffeeka/src/present/coffee/testdata.txt"
 imgfilepath = "/home/pi/Federal-IoT/Franz_Koffeeka/src/present/Coffee Images/CoffeeExport/"
-left_image = []
-right_image = []
+
+left_image = [IMAGE_BLACK, IMAGE_BLACK, IMAGE_BLACK]
+right_image = [IMAGE_BLACK, IMAGE_NONE, IMAGE_NONE]
 
 # Rows and chain length are both required parameters:
 matrix = Adafruit_RGBmatrix(32, 2)
@@ -33,20 +37,29 @@ matrix = Adafruit_RGBmatrix(32, 2)
 ##  Right panel shows coffee pot level:
 ##     empty (3) - empty, red (2) - low, yellow (1) - half, green (0) - full
 ##   and strength: 0 - no drip, 1 - left drip, 2 - right drip, 3 - both drips
+##   Currently there is only one image for right, so whatever is set in position 0 goes to 1 & 2
 ##  Left panel shows brewing status. Stays dark with no brewing active right now.
 ##    Later it could show last brew time maybe...
 ##  (Not totally sure what the graphic designer meant by the symbols, so this is the interpretation)
 ## Image selection code could be simplified by renaming files to include numerics and build file names or something.
 ## Another enhancement is to let drips build up to strength with each image display
+##   (or change strength represention which is backlog item and then drips could display animated while brewing)
+##   Currently the only use for left is brewing, so it is either black the whole time or
+##     flashes white brewing (0), black (1), pink brewing (2) to make a flashing sign affect
 
 def presentStatus(row):
-    left_image.insert(0,'Black.png')
-    left_image.insert(1,'Black.png')
-    left_image.insert(2,'Black.png')
-    right_image.insert(0,'Black.png')
-    right_image.insert(1,'None')
-    right_image.insert(2,'None')
-    print(left_image[0])
+    # left_image.insert(0,'Black.png')
+    # left_image.insert(1,'Black.png')
+    # left_image.insert(2,'Black.png')
+    # right_image.insert(0,'Black.png')
+    # right_image.insert(1,'None')
+    # right_image.insert(2,'None')
+# initialize to black, but then right 2 & 3 need None for logic below
+    for img in range(3):
+       left_image[img] = IMAGE_BLACK
+       right_image[img] = IMAGE_BLACK
+    right_image[1] = IMAGE_NONE
+    right_image[2] = IMAGE_NONE
 
     if  row['brewing'] == 't':
         left_image[0] = 'Brewing_Pink.png'
