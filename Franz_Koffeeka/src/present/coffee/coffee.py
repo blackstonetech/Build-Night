@@ -98,20 +98,20 @@ def presentStatus(row):
 ## Loop through 3 possible images displaying them.
 ## When no right images loaded (none), just repeat first image
     for img in range(3):
-         left_imagefile = imgfilepath + left_image[img]
-         print(left_imagefile)
-         image = Image.open(left_imagefile)
-         image.load()          # Must do this before SetImage() calls
-         matrix.SetImage(image.im.id, 0, 0)
-         if right_image[img] != 'None' :
-             right_imagefile = imgfilepath + right_image[img]
-         else :
-             right_imagefile = imgfilepath + right_image[0]
-             print(right_imagefile)
-             rimage = Image.open(right_imagefile)
-             rimage.load()          # Must do this before SetImage() calls
-             matrix.SetImage(rimage.im.id, 33, 0)
-         time.sleep(IMAGE_DISPLAY_DURATION)
+        left_imagefile = imgfilepath + left_image[img]
+        print(left_imagefile)
+        image = Image.open(left_imagefile)
+        image.load()          # Must do this before SetImage() calls
+        matrix.SetImage(image.im.id, 0, 0)
+        if right_image[img] != 'None' :
+            right_imagefile = imgfilepath + right_image[img]
+        else :
+            right_imagefile = imgfilepath + right_image[0]
+        print(right_imagefile)
+        rimage = Image.open(right_imagefile)
+        rimage.load()          # Must do this before SetImage() calls
+        matrix.SetImage(rimage.im.id, 33, 0)
+        time.sleep(IMAGE_DISPLAY_DURATION)
 
 
 def main():
