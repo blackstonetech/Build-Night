@@ -18,7 +18,7 @@ Come join us in an attempt to hack together an Internet of Things experiment!!!
 * Arduino based Feather microcomputers with WiFi
 * Various Sensors
 * Rasberry Pi
-* 32x32 "pixel" display panel
+* 32x32 "pixel" display panels
 
 Teams will work on different aspects of the project such as teams coding and testing sensors, team coding storage of data, team managing retrieval and display of data.
 
@@ -111,7 +111,6 @@ https://smile.amazon.com/gp/product/B00NPZ4CPG/ref=od_aui_detailpages01?ie=UTF8&
   * Add-on board for Video display
 * 4x 32x32 video array boards (can be joined to quad display)
 * 1x Rasberry Pi 2 (for testing)
-
 
 [img CoffeeRobot]:coffeerobot.png "Coffee Robot"
 [img Coffee IoT Concepts]:coffeeIoTBoard5.png "Coffee IoT Concepts"
