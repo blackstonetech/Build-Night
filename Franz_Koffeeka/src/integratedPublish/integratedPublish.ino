@@ -87,11 +87,11 @@ void loop() {
   // function definition further below.
   MQTT_connect();
 
-  boolean brewing = dhtSensor();
+  char brewing = dhtSensor();
   int strength = rgbSensor();
   int level = irSensorBreak();
   
-  String data = String(brewing) + "|" + String(strength) + "|" + String(level);
+  String data = "0|" + String(brewing) + "|" + String(strength) + "|" + String(level);
   Serial.println(data);
 
   // Publish the sensor information following the string format requested by the display group.
@@ -110,17 +110,18 @@ void loop() {
   */
 
   // Delay between publish sequences
-  delay(500);
+  delay(5000);
 }
 
 /**************************** Humidity Sensor Publish ************************************/
-boolean dhtSensor() {
+char dhtSensor() {
   // DHT temperature and humidity sensor values
   // Read humidity
-  boolean ret = false;
+  char ret = 'f';
   float h = dht.readHumidity();
-  if(h > 45){
-    ret = true;
+  Serial.println(h);
+  if(h > 90){
+    ret = 't';
   }
   return ret;
 }
@@ -150,10 +151,12 @@ int rgbSensor() {
   int coffeeStrength = 0;
   uint16_t r, g, b, c, colorTemp, lux;
   tcs.getRawData(&r, &g, &b, &c);
+
+  Serial.println(c);
     
-  if(( c > 600) && ( c < 710 )){
+  if(( c > 6000) && ( c < 6300 )){
     coffeeStrength = 1;}
-  else if (( c > 710 ) && ( c < 900 )){
+  else if (( c > 6300 ) && ( c < 7000 )){
     coffeeStrength = 2;}
   else{
     coffeeStrength = 0;}
