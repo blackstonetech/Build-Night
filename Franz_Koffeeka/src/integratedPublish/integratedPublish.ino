@@ -22,6 +22,13 @@ Adafruit_MLX90614 mlx = Adafruit_MLX90614();
 #define AIO_USERNAME    ""
 #define AIO_KEY         ""
 
+/** Logging MQTT Server **/
+#define Log_SERVER      "192.168.127.66"
+#define Log_SERVERPORT  1883                   // use 8883 for SSL
+#define Log_USERNAME    ""
+#define Log_KEY         ""
+
+
 // ESP8266 WiFiClient to connect to the MQTT server.
 WiFiClient client;
 // or... use WiFiFlientSecure for SSL
@@ -29,8 +36,14 @@ WiFiClient client;
 
 // Setup the MQTT client class by passing in the WiFi client and MQTT server and login details.
 Adafruit_MQTT_Client mqtt(&client, AIO_SERVER, AIO_SERVERPORT, AIO_USERNAME, AIO_KEY);
+// Logging Server Details
+Adafruit_MQTT_Client logmqtt(&client, Log_SERVER, Log_SERVERPORT, Log_USERNAME, Log_KEY);
+
 /****************************** Feeds ***************************************/
 Adafruit_MQTT_Publish coffeePublish = Adafruit_MQTT_Publish(&mqtt, "/topic/coffee");
+
+/** Feed for logging **/
+Adafruit_MQTT_Publish logPublish = Adafruit_MQTT_Publish(&logmqtt, "/topic/coffeeLogs");
 
 /************** DHT TempHumidity Sensor ***************/
 #include "DHT.h"
@@ -50,8 +63,6 @@ Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_700MS, TCS347
 int sensorState3 = 0;         
 int sensorState2 = 0;         
 int sensorState1 = 0;  
-
-void MQTT_connect();
 
 /**************************** WiFi Setup ************************************/
 void setup() {
@@ -85,7 +96,8 @@ void loop() {
   // Ensure the connection to the MQTT server is alive (this will make the first
   // connection and automatically reconnect when disconnected).  See the MQTT_connect
   // function definition further below.
-  MQTT_connect();
+  MQTT_connect(logmqtt, 1);
+  MQTT_connect(mqtt, 3);
 
   char brewing = dhtSensor();
   int strength = rgbSensor();
@@ -94,23 +106,36 @@ void loop() {
   String data = "0|" + String(brewing) + "|" + String(strength) + "|" + String(level);
   Serial.println(data);
 
+  mqtt_send(data);
+
+  // Delay between publish sequences
+  delay(5000);
+
+  // ping the server to keep the mqtt connection alive
+  if(! mqtt.ping()) {
+    mqtt.disconnect();
+  }
+}
+
   // Publish the sensor information following the string format requested by the display group.
- if (! coffeePublish.publish(data.c_str())) {
+void mqtt_send(String data)
+{
+   if (! coffeePublish.publish(data.c_str())) {
     Serial.println(F("Failed"));
   } else {
     Serial.println(F("OK!"));
   }
+}
 
-  // ping the server to keep the mqtt connection alive
-  // NOT required if you are publishing once every KEEPALIVE seconds
-  /*
-  if(! mqtt.ping()) {
-    mqtt.disconnect();
+void mqtt_debug_send(String data)
+{
+  if(logmqtt.connected()){
+    if (! logPublish.publish(data.c_str())) {
+      Serial.println(F("Failed"));
+    } else {
+      Serial.println(F("OK!"));
+    }
   }
-  */
-
-  // Delay between publish sequences
-  delay(5000);
 }
 
 /**************************** Humidity Sensor Publish ************************************/
@@ -119,11 +144,17 @@ char dhtSensor() {
   // Read humidity
   char ret = 'f';
   float h = dht.readHumidity();
+  
+  /*** Debug Logging ***/
+  String data = "Humidity: " + String(h);
+  mqtt_debug_send(data);
+  
   Serial.println(h);
   if(h > 90){
     ret = 't';
   }
-  return ret;
+  /*return ret;*/
+  return 'f';
 }
 
 /**************************** IR Sensor Break Sensor Publish ************************************/
@@ -133,6 +164,10 @@ int irSensorBreak(){
   sensorState3 = digitalRead(SENSORPIN75);
   sensorState2 = digitalRead(SENSORPIN50);
   sensorState1 = digitalRead(SENSORPIN25);
+
+  /*** Debug Logging ***/
+  String data = "IR Sensors - 1:" + String(sensorState1) + " 2:" + String(sensorState2) + " 3:" + String(sensorState3);
+  mqtt_debug_send(data);
 
   /*
    * 3 = full
@@ -152,6 +187,10 @@ int rgbSensor() {
   uint16_t r, g, b, c, colorTemp, lux;
   tcs.getRawData(&r, &g, &b, &c);
 
+    /*** Debug Logging ***/
+  String data = "RGB Sensor - r:" + String(r) + " g:" + String(g) + " b:" + String(b);
+  mqtt_debug_send(data);
+
   Serial.println(c);
     
   if(( c > 6000) && ( c < 6300 )){
@@ -167,18 +206,17 @@ int rgbSensor() {
 /**************************** Server Connection ************************************/
 // Function to connect and reconnect as necessary to the MQTT server.
 // Should be called in the loop function and it will take care if connecting.
-void MQTT_connect() {
+void MQTT_connect(Adafruit_MQTT_Client mqtt_client, uint8_t retries) {
   int8_t ret;
   // Stop if already connected.
-  if (mqtt.connected()) {
+  if (mqtt_client.connected()) {
     return;
   }
   Serial.print("Connecting to MQTT... ");
-  uint8_t retries = 3;
-  while ((ret = mqtt.connect()) != 0) { // connect will return 0 for connected
-       Serial.println(mqtt.connectErrorString(ret));
+  while ((ret = mqtt_client.connect()) != 0) { // connect will return 0 for connected
+       Serial.println(mqtt_client.connectErrorString(ret));
        Serial.println("Retrying MQTT connection in 5 seconds...");
-       mqtt.disconnect();
+       mqtt_client.disconnect();
        delay(5000);  // wait 5 seconds
        retries--;
        if (retries == 0) {
