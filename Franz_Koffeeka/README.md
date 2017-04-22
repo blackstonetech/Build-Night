@@ -110,8 +110,7 @@ https://smile.amazon.com/gp/product/B00NPZ4CPG/ref=od_aui_detailpages01?ie=UTF8&
 * 1x Rasberry Pi 3 model B
   * Add-on board for Video display
 * 4x 32x32 video array boards (can be joined to quad display)
-* 1x Rasberry Pi 2 (for testing)   
-
+* 1x Rasberry Pi 2 (for testing)
 
 [img CoffeeRobot]:coffeerobot.png "Coffee Robot"
 [img Coffee IoT Concepts]:coffeeIoTBoard5.png "Coffee IoT Concepts"
