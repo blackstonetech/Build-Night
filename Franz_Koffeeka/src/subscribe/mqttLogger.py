@@ -6,7 +6,7 @@ import os, datetime, time
 # Internet of Coffee - Logger
 
 #TODO: replace with args
-LOG_FILE_PATH = '/home/pi'
+LOG_FILE_PATH = '/home/iotadmin'
 LOG_FILE_NAME = 'IoCoffee.log'
 
 
