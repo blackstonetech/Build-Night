@@ -1,0 +1,25 @@
+Auto H2O
+Agenda
+-	Break out into groups
+-	Download the Arduino IDE (if not already installed)
+-	Configure IDE (we’ll do this together)
+-	Clone the base code and begin your adventure!
+-	When you’re finished (or at the end of the night), save and commit your code back to the AutoH2O folder.
+Base Code
+https://github.com/blackstonetech/Federal-IoT/tree/master/AutoH2O 
+-	Copy Elise’s code to use as the starting point. 
+Lessons Learned
+-	Arduino does not keep time. By that, we mean that time for the Arduino is relative to the time since the Arduino was powered on. This means that anytime the power goes out, the circuit is unplugged, etc. your Arduino’s time will start all over. 
+-	Seeds need more water than plants. This watering system will not work well for seeds. It’s best to nurture the seeds in a cup of water until there are sprouts before planting and implementing this auto water system.
+-	Different plants require different watering schedules. Make sure you know what your plant’s environment needs to be before setting the water schedule.
+-	There may need to be some error handling in the Auto H2O system. How to know if the water in the vessel is empty? If the Arduino has been shut off? Is the motor working properly? Etc…
+-	The moisture sensors are not the best. They tend to be fairly binary between dry or soaking wet, so measurements may be somewhat unreliable. This means it’s important to check both the moisture level and have a set schedule for watering.
+Recommendations
+-	Take an average moisture reading to use as a counter
+-	Use the counter to check the time since the last reading to verify accuracy of readings. 
+o	If no reading available, could assume that the power was disrupted. 
+o	What to do if power is disrupted? Maybe wait x amount of time, then proceed with regular watering schedule.
+Mint plants
+-	Soil should never be drenched, but evenly watered
+-	Soil should be wet immediately after watering, but then allowed to dry to more of a damp state (not totally dry, but barely moist) before watering again
+o	Maybe water once per day for short periods of time
