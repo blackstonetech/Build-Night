@@ -22,6 +22,8 @@ https://www.adafruit.com/product/2900
 https://www.sparkfun.com/products/9264
 
 Raspberry Pie For Broker
+36.99
+https://www.newegg.com/Product/Product.aspx?Item=N82E16813300007&ignorebbr=1&nm_mc=KNC-GoogleAdwords-PC&cm_mmc=KNC-GoogleAdwords-PC-_-pla-_-Motherboard+%2F+CPU+%2F+VGA+Sets-_-N82E16813300007&gclid=CjwKEAiArvTFBRCLq5-7-MSJ0jMSJABHBvp0aWqcVYCB52ySxVmm9nBN28kGAC-Ti6hxjziASGapNRoCpdvw_wcB&gclsrc=aw.ds
 
 ****  Dont Need  ****
 Assembled Feather Huzza
