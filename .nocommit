@@ -5,29 +5,24 @@ Blackstone Internet of Coffee Pub Sub Program
 #include <ESP8266WiFi.h>
 #include "Adafruit_MQTT.h"
 #include "Adafruit_MQTT_Client.h"
+
 #include <Wire.h>
 #include "Adafruit_TCS34725.h"
-
 
 /************** Temperature Sensor ***************/
 #include "Adafruit_MLX90614.h"
 Adafruit_MLX90614 mlx = Adafruit_MLX90614();
 
-/************** DHT TempHumidity Sensor ***************/
-#include "DHT.h"
-#define DHTPIN 2     // what digital pin we're connected to
-#define DHTTYPE DHT22   // DHT 22  (AM2302), AM2321
-DHT dht(DHTPIN, DHTTYPE);
-
 /************************* WiFi Access Point *********************************/
 #define WLAN_SSID       "BTGDCguest"
 #define WLAN_PASS       "Black$tone45"
-
 /************************* MQTT Server Setup *********************************/
-#define AIO_SERVER      "192.168.10.2"
+#define AIO_SERVER      "192.168.3.82"
 #define AIO_SERVERPORT  1883                   // use 8883 for SSL
 #define AIO_USERNAME    ""
 #define AIO_KEY         ""
+#define WAITTIME       500
+
 
 // ESP8266 WiFiClient to connect to the MQTT server.
 WiFiClient client;
@@ -39,10 +34,33 @@ Adafruit_MQTT_Client mqtt(&client, AIO_SERVER, AIO_SERVERPORT, AIO_USERNAME, AIO
 /****************************** Feeds ***************************************/
 Adafruit_MQTT_Publish coffeePublish = Adafruit_MQTT_Publish(&mqtt, "/topic/coffee");
 
+/************** DHT TempHumidity Sensor ***************/
+#include "DHT.h"
+#define DHTPIN 2     // what digital pin we're connected to
+#define DHTTYPE DHT22   // DHT 22  (AM2302), AM2321
+DHT dht(DHTPIN, DHTTYPE);
+
+/************** IR Sensor Inputs ***************/
+#define SENSORPIN75 14
+#define SENSORPIN50 12
+#define SENSORPIN25 13
+
+/************** TCS Sensor Inputs ***************/
+Adafruit_TCS34725 tcs;
+
+/************** Variables for reading the pushbutton status ***************/
+int sensorState3 = 0;         
+int sensorState2 = 0;         
+int sensorState1 = 0;  
+
 void MQTT_connect();
 
 /**************************** WiFi Setup ************************************/
 void setup() {
+// Turn on the pullup
+  digitalWrite(SENSORPIN75, HIGH);
+  digitalWrite(SENSORPIN50, HIGH);
+  digitalWrite(SENSORPIN25, HIGH); 
   Serial.begin(115200);
   delay(10);
   Serial.println(("Internet of Coffee!"));
@@ -61,25 +79,21 @@ void setup() {
   mlx.begin();
 }
 
-/**************************** Publish Loop ************************************/
 void loop() {
   // Ensure the connection to the MQTT server is alive (this will make the first
   // connection and automatically reconnect when disconnected).  See the MQTT_connect
   // function definition further below.
   MQTT_connect();
 
-  // Concatentate temperature sensor.
-  float temperature = tempSensor();
-
-  // Concatentate light sensor.
-  float light = lightSensor();
-
-  float humidity = dhtSensor();
+  boolean brewing = dhtSensor();
+  int strength = rgbSensor();
+  int level = irSensorBreak();
   
-  String data = String(humidity);
+  String data = String(brewing) + "|" + String(strength) + "|" + String(level);
+  Serial.println(data);
 
   // Publish the sensor information following the string format requested by the display group.
-  if (! coffeePublish.publish(data.c_str())) {
+ if (! coffeePublish.publish(data.c_str())) {
     Serial.println(F("Failed"));
   } else {
     Serial.println(F("OK!"));
@@ -94,35 +108,59 @@ void loop() {
   */
 
   // Delay between publish sequences
-  delay(1000);
+  delay(WAITTIME);
 }
 
-/**************************** Temperature Sensor Publish ************************************/
-float tempSensor() {
-  // Temperature Sensor
-  float tempObject = mlx.readObjectTempC();
+/**************************** Humidity Sensor Init ************************************/
+boolean dhtSensorInit() {
 
-  return tempObject;
-}
-
-
-/**************************** Light Sensor Publish ************************************/
-int lightSensor() {
-  // Analog Input from Light Sensor
-  int pin = A0;
-  float lightRead = analogRead(pin);
-
-  return lightRead;
 }
 
 /**************************** Humidity Sensor Publish ************************************/
-float dhtSensor() {
+boolean dhtSensor() {
   // DHT temperature and humidity sensor values
   // Read humidity
+  boolean ret = false;
   float h = dht.readHumidity();
-
-  return h;
+  if(h > 45){
+    ret = true;
+  }
+  return ret;
 }
+
+/**************************** IR Sensor Break Sensor Init ************************************/
+int irSensorBreakInit(){
+// initialize the sensor pin as an input:
+  pinMode(SENSORPIN75, INPUT);     
+  pinMode(SENSORPIN50, INPUT);
+  pinMode(SENSORPIN25, INPUT);
+
+}
+
+/**************************** IR Sensor Break Sensor Publish ************************************/
+int irSensorBreak(){
+// read the state of the pushbutton value:
+  sensorState3 = digitalRead(SENSORPIN75);
+  sensorState2 = digitalRead(SENSORPIN50);
+  sensorState1 = digitalRead(SENSORPIN25);
+
+  /*
+   * 3 = full
+   * 2 = half
+   * 1 = low
+   * 0 = empty
+   */
+  int total = sensorState3 + sensorState2 + sensorState1;
+  return total;
+}
+
+/**************************** RGB Sensor Init ************************************/
+int rgbSensorInit() {
+
+  tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_700MS, TCS34725_GAIN_1X);
+
+}
+
 
 /**************************** RGB Sensor Publish ************************************/
 int rgbSensor() {

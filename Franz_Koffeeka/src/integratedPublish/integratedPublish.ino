@@ -13,24 +13,49 @@ Blackstone Internet of Coffee Pub Sub Program
 #include "Adafruit_MLX90614.h"
 Adafruit_MLX90614 mlx = Adafruit_MLX90614();
 
+#define INFO  0  /* basic to console */
+#define WARN  1  /* debug to console */
+#define DEBUG 2 /* debug to console and log collector queue */ 
+/****  SET THIS FOR DESIRED OUTPUT  ****/
+int logLevel = DEBUG ;  
+
 /************************* WiFi Access Point *********************************/
-#define WLAN_SSID       "IOCOFFEE"
-#define WLAN_PASS       ""
+#define WLAN_SSID       "BTGDCguest"
+#define WLAN_PASS       "Black$tone45"
+
 /************************* MQTT Server Setup *********************************/
-#define AIO_SERVER      "192.168.10.2"
+#define AIO_SERVER      "192.168.3.82"
 #define AIO_SERVERPORT  1883                   // use 8883 for SSL
 #define AIO_USERNAME    ""
 #define AIO_KEY         ""
+#define AIO_CONTEXT     "/topic/coffee"
+
+/****************** Logging MQTT Server Setup ********************************/
+#define Log_SERVER      "192.168.3.236"
+#define Log_SERVERPORT  1883                   // use 8883 for SSL
+#define Log_USERNAME    ""
+#define Log_KEY         ""
+#define Log_KEY         ""
+#define Log_CONTEXT     "/topic/coffeeLogs"
+
 
 // ESP8266 WiFiClient to connect to the MQTT server.
 WiFiClient client;
-// or... use WiFiFlientSecure for SSL
+// or... use WiFiClientSecure for SSL
 //WiFiClientSecure client;
 
 // Setup the MQTT client class by passing in the WiFi client and MQTT server and login details.
 Adafruit_MQTT_Client mqtt(&client, AIO_SERVER, AIO_SERVERPORT, AIO_USERNAME, AIO_KEY);
+Adafruit_MQTT_Publish coffeePublish = Adafruit_MQTT_Publish(&mqtt, AIO_CONTEXT);
+
+// Logging Server Details
+//Adafruit_MQTT_Client *logmqtt;
+Adafruit_MQTT_Client* logmqtt = NULL;
+Adafruit_MQTT_Publish* logPublish = NULL;
+
 /****************************** Feeds ***************************************/
-Adafruit_MQTT_Publish coffeePublish = Adafruit_MQTT_Publish(&mqtt, "/topic/coffee");
+
+/** Feed for logging **/
 
 /************** DHT TempHumidity Sensor ***************/
 #include "DHT.h"
@@ -50,8 +75,6 @@ Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_700MS, TCS347
 int sensorState3 = 0;         
 int sensorState2 = 0;         
 int sensorState1 = 0;  
-
-void MQTT_connect();
 
 /**************************** WiFi Setup ************************************/
 void setup() {
@@ -78,6 +101,15 @@ void setup() {
   Serial.println("WiFi connected");
   Serial.println("IP address: "); Serial.println(WiFi.localIP());
     // Input from MLX
+
+if (logLevel == DEBUG) {
+//  Adafruit_MQTT_Client logmqtt(&client, Log_SERVER, Log_SERVERPORT, Log_USERNAME, Log_KEY);
+//  Adafruit_MQTT_Publish logPublish = Adafruit_MQTT_Publish(&logmqtt, Log_CONTEXT);
+  logmqtt  = new Adafruit_MQTT_Client(&client, Log_SERVER, Log_SERVERPORT, Log_USERNAME, Log_KEY);
+  logPublish = new Adafruit_MQTT_Publish(logmqtt, Log_CONTEXT);
+
+}
+
   mlx.begin();
 }
 
@@ -85,44 +117,70 @@ void loop() {
   // Ensure the connection to the MQTT server is alive (this will make the first
   // connection and automatically reconnect when disconnected).  See the MQTT_connect
   // function definition further below.
-  MQTT_connect();
+  MQTT_connect(*logmqtt, 1);
+  MQTT_connect(mqtt, 3);
 
-  boolean brewing = dhtSensor();
+  char brewing = dhtSensor();
   int strength = rgbSensor();
   int level = irSensorBreak();
   
-  String data = String(brewing) + "|" + String(strength) + "|" + String(level);
-  Serial.println(data);
+  String data = "0|" + String(brewing) + "|" + String(strength) + "|" + String(level);
+  logmsg(data, INFO);
 
-  // Publish the sensor information following the string format requested by the display group.
- if (! coffeePublish.publish(data.c_str())) {
-    Serial.println(F("Failed"));
-  } else {
-    Serial.println(F("OK!"));
-  }
+  mqtt_send(data);
+
+  // Delay between publish sequences
+  delay(5000);
 
   // ping the server to keep the mqtt connection alive
-  // NOT required if you are publishing once every KEEPALIVE seconds
-  /*
   if(! mqtt.ping()) {
     mqtt.disconnect();
   }
-  */
+}
 
-  // Delay between publish sequences
-  delay(500);
+  // Publish the sensor information following the string format requested by the display group.
+void mqtt_send(String data)
+{
+   if (! coffeePublish.publish(data.c_str())) {
+ //   Serial.println(F("Failed"));
+    logmsg(F("Failed"), INFO);
+  } else {
+    logmsg(F("OK!"), INFO);
+  }
+}
+
+void mqtt_debug_send(String data)
+{
+  if(logmqtt->connected()){
+    if (! logPublish->publish(data.c_str())) {
+      logmsg(F("Failed"), INFO);
+    } else {
+      logmsg(F("OK!"), INFO);
+    }
+  }
 }
 
 /**************************** Humidity Sensor Publish ************************************/
-boolean dhtSensor() {
+char dhtSensor() {
   // DHT temperature and humidity sensor values
   // Read humidity
-  boolean ret = false;
+  char ret = 'f';
   float h = dht.readHumidity();
-  if(h > 45){
-    ret = true;
+  
+  // Serial.println(h);
+  if(h > 90){
+    ret = 't';
   }
-  return ret;
+
+  /*** Debug Logging ***/
+  String data = "Humidity: " + String(h) + " brewing:" + String(ret);
+  logmsg(data, DEBUG);
+//  mqtt_debug_send(data);
+// Serial.println(data);
+ 
+  /*return ret;*/
+  // Temp until brewing calc works:
+  return 'f';
 }
 
 /**************************** IR Sensor Break Sensor Publish ************************************/
@@ -140,6 +198,11 @@ int irSensorBreak(){
    * 0 = empty
    */
   int total = sensorState3 + sensorState2 + sensorState1;
+
+  /*** Debug Logging ***/
+  String data = "IR Sensors - 1:" + String(sensorState1) + " 2:" + String(sensorState2) + " 3:" + String(sensorState3) + " Total:" + String(total);
+  logmsg(data, DEBUG);
+
   return total;
 }
 
@@ -150,13 +213,17 @@ int rgbSensor() {
   int coffeeStrength = 0;
   uint16_t r, g, b, c, colorTemp, lux;
   tcs.getRawData(&r, &g, &b, &c);
-    
-  if(( c > 600) && ( c < 710 )){
+
+  if(( c > 6000) && ( c < 6300 )){
     coffeeStrength = 1;}
-  else if (( c > 710 ) && ( c < 900 )){
+  else if (( c > 6300 ) && ( c < 7000 )){
     coffeeStrength = 2;}
   else{
     coffeeStrength = 0;}
+
+  /*** Debug Logging ***/
+  String data = "RGB Sensor - r:" + String(r) + " g:" + String(g) + " b:" + String(b)+ " c:" + String(c) + " strength:" + String(coffeeStrength);
+  logmsg(data, DEBUG);
     
   return coffeeStrength;
 }
@@ -164,18 +231,17 @@ int rgbSensor() {
 /**************************** Server Connection ************************************/
 // Function to connect and reconnect as necessary to the MQTT server.
 // Should be called in the loop function and it will take care if connecting.
-void MQTT_connect() {
+void MQTT_connect(Adafruit_MQTT_Client mqtt_client, uint8_t retries) {
   int8_t ret;
   // Stop if already connected.
-  if (mqtt.connected()) {
+  if (mqtt_client.connected()) {
     return;
   }
-  Serial.print("Connecting to MQTT... ");
-  uint8_t retries = 3;
-  while ((ret = mqtt.connect()) != 0) { // connect will return 0 for connected
-       Serial.println(mqtt.connectErrorString(ret));
+  logmsg("Connecting to MQTT... ", INFO);
+  while ((ret = mqtt_client.connect()) != 0) { // connect will return 0 for connected
+       Serial.println(mqtt_client.connectErrorString(ret));
        Serial.println("Retrying MQTT connection in 5 seconds...");
-       mqtt.disconnect();
+       mqtt_client.disconnect();
        delay(5000);  // wait 5 seconds
        retries--;
        if (retries == 0) {
@@ -183,5 +249,45 @@ void MQTT_connect() {
          while (1);
        }
   }
-  Serial.println("MQTT Connected!");
+  logmsg("MQTT Connected!", INFO);
 }
+
+/**************************** Common Logging Service ************************************/
+void logmsg(String data, int logMsgLevel) {
+// Use relation of global log level and message log level to output desired logs
+/*  decision tree and pseudocode of the combinations that cause print and mqtt
+ ll lml
+ 0  0   print
+ 0  1   nothing
+ 0  2   nothing
+ 1  0   print
+ 1  1   print
+ 1  2   nothing
+ 2  0   print
+ 2  1   print
+ 2  2   print+mqtt
+
+if ll0 and lml0
+  print
+if ll1 and lml < 2
+  print
+if ll2
+  print
+if lml
+  mqtt
+*/
+
+  if (((logLevel == INFO) && (logMsgLevel == INFO)) || 
+     ((logLevel == WARN) && (logMsgLevel < DEBUG)) ||
+     ((logLevel == DEBUG))) {
+     Serial.print(data);
+  }
+  
+  if ((logLevel == DEBUG) && (logMsgLevel == DEBUG)) {
+      mqtt_debug_send(data);
+  }
+
+  return ;
+}
+
+
