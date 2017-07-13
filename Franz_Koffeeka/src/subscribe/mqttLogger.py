@@ -8,7 +8,7 @@ import os, datetime, time
 #TODO: replace with args
 LOG_FILE_PATH = '/home/iotadmin'
 LOG_FILE_NAME = 'IoCoffee.log'
-MQTT_TOPIC_COFFEE = '/topic/coffee'
+MQTT_TOPIC_COFFEE = '/topic/coffeeLogs'
 
 
 def on_connect(client, userdata, flags, rc):
