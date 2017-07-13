@@ -8,11 +8,12 @@ import os, datetime, time
 #TODO: replace with args
 LOG_FILE_PATH = '/home/iotadmin'
 LOG_FILE_NAME = 'IoCoffee.log'
+MQTT_TOPIC_COFFEE = '/topic/coffee'
 
 
 def on_connect(client, userdata, flags, rc):
   print("Connected with result code "+str(rc))
-  client.subscribe("topic/coffeeLogs")
+  client.subscribe(MQTT_TOPIC_COFFEE)
   
 def on_message(client, userdata, msg):
   epochtime = time.time()

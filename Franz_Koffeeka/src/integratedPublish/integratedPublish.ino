@@ -17,7 +17,7 @@ Adafruit_MLX90614 mlx = Adafruit_MLX90614();
 #define WARN  1  /* debug to console */
 #define DEBUG 2 /* debug to console and log collector queue */ 
 /****  SET THIS FOR DESIRED OUTPUT  ****/
-int logLevel = DEBUG ;  
+int logLevel = WARN ;  
 
 /************************* WiFi Access Point *********************************/
 #define WLAN_SSID       "BTGDCguest"
@@ -28,28 +28,28 @@ int logLevel = DEBUG ;
 #define AIO_SERVERPORT  1883                   // use 8883 for SSL
 #define AIO_USERNAME    ""
 #define AIO_KEY         ""
-#define AIO_CONTEXT     "/topic/coffee"
+#define AIO_CONTEXT     "topic/coffee"
 
 /****************** Logging MQTT Server Setup ********************************/
-#define Log_SERVER      "192.168.3.236"
+#define Log_SERVER      "192.168.8.211"
 #define Log_SERVERPORT  1883                   // use 8883 for SSL
 #define Log_USERNAME    ""
 #define Log_KEY         ""
 #define Log_KEY         ""
-#define Log_CONTEXT     "/topic/coffeeLogs"
+#define Log_CONTEXT     "topic/coffeeLogs"
 
 
 // ESP8266 WiFiClient to connect to the MQTT server.
-WiFiClient client;
+WiFiClient dataWiFiclient;
 // or... use WiFiClientSecure for SSL
 //WiFiClientSecure client;
 
 // Setup the MQTT client class by passing in the WiFi client and MQTT server and login details.
-Adafruit_MQTT_Client mqtt(&client, AIO_SERVER, AIO_SERVERPORT, AIO_USERNAME, AIO_KEY);
+Adafruit_MQTT_Client mqtt(&dataWiFiclient, AIO_SERVER, AIO_SERVERPORT, AIO_USERNAME, AIO_KEY);
 Adafruit_MQTT_Publish coffeePublish = Adafruit_MQTT_Publish(&mqtt, AIO_CONTEXT);
 
 // Logging Server Details
-//Adafruit_MQTT_Client *logmqtt;
+// Defined as an address as cannot test for Debug in this scope
 Adafruit_MQTT_Client* logmqtt = NULL;
 Adafruit_MQTT_Publish* logPublish = NULL;
 
@@ -105,7 +105,8 @@ void setup() {
 if (logLevel == DEBUG) {
 //  Adafruit_MQTT_Client logmqtt(&client, Log_SERVER, Log_SERVERPORT, Log_USERNAME, Log_KEY);
 //  Adafruit_MQTT_Publish logPublish = Adafruit_MQTT_Publish(&logmqtt, Log_CONTEXT);
-  logmqtt  = new Adafruit_MQTT_Client(&client, Log_SERVER, Log_SERVERPORT, Log_USERNAME, Log_KEY);
+
+  logmqtt  = new Adafruit_MQTT_Client(&dataWiFiclient, Log_SERVER, Log_SERVERPORT, Log_USERNAME, Log_KEY);
   logPublish = new Adafruit_MQTT_Publish(logmqtt, Log_CONTEXT);
 
 }
@@ -117,8 +118,13 @@ void loop() {
   // Ensure the connection to the MQTT server is alive (this will make the first
   // connection and automatically reconnect when disconnected).  See the MQTT_connect
   // function definition further below.
-  MQTT_connect(*logmqtt, 1);
   MQTT_connect(mqtt, 3);
+ 
+  if (logLevel == DEBUG) {
+    logmsg(F("DEBUG ON - Connecting MQTT"), INFO);
+    MQTT_connect(*logmqtt, 3);
+ 
+  }
 
   char brewing = dhtSensor();
   int strength = rgbSensor();
@@ -136,6 +142,11 @@ void loop() {
   if(! mqtt.ping()) {
     mqtt.disconnect();
   }
+  if (logLevel == DEBUG) {
+    if(! logmqtt->ping()) {
+      logmqtt->disconnect();
+    }
+  }
 }
 
   // Publish the sensor information following the string format requested by the display group.
@@ -143,19 +154,23 @@ void mqtt_send(String data)
 {
    if (! coffeePublish.publish(data.c_str())) {
  //   Serial.println(F("Failed"));
-    logmsg(F("Failed"), INFO);
+    logmsg(F("Publish Data Message - FAILED"), INFO);
   } else {
-    logmsg(F("OK!"), INFO);
+    logmsg(F("Publish Data Message - OK!"), INFO);
   }
 }
 
 void mqtt_debug_send(String data)
 {
+  int rc = 0;
   if(logmqtt->connected()){
-    if (! logPublish->publish(data.c_str())) {
-      logmsg(F("Failed"), INFO);
+//    if (! logPublish->publish(data.c_str())) {
+    rc = logPublish->publish(data.c_str());
+    logmsg(F("Publish Debug Message - FAILED"), INFO);
+    if (! rc ) {
+      logmsg(F("Publish Debug Message - FAILED"), INFO);
     } else {
-      logmsg(F("OK!"), INFO);
+      logmsg(F("Publish Debug Message - OK!"), INFO);
     }
   }
 }
@@ -230,13 +245,14 @@ int rgbSensor() {
 
 /**************************** Server Connection ************************************/
 // Function to connect and reconnect as necessary to the MQTT server.
-// Should be called in the loop function and it will take care if connecting.
+// Should be called in the loop function and it will take care of connecting.
 void MQTT_connect(Adafruit_MQTT_Client mqtt_client, uint8_t retries) {
   int8_t ret;
   // Stop if already connected.
   if (mqtt_client.connected()) {
     return;
   }
+  
   logmsg("Connecting to MQTT... ", INFO);
   while ((ret = mqtt_client.connect()) != 0) { // connect will return 0 for connected
        Serial.println(mqtt_client.connectErrorString(ret));
@@ -280,7 +296,7 @@ if lml
   if (((logLevel == INFO) && (logMsgLevel == INFO)) || 
      ((logLevel == WARN) && (logMsgLevel < DEBUG)) ||
      ((logLevel == DEBUG))) {
-     Serial.print(data);
+     Serial.println(data);
   }
   
   if ((logLevel == DEBUG) && (logMsgLevel == DEBUG)) {

@@ -8,11 +8,12 @@ import os, datetime, time
 #TODO: replace with args
 CSV_FILE_PATH = '/home/pi'
 CSV_FILE_NAME = 'IoCoffee.csv'
+MQTT_TOPIC_COFFEE = '/topic/coffee'
 
 
 def on_connect(client, userdata, flags, rc):
   print("Connected with result code "+str(rc))
-  client.subscribe("topic/coffee")
+  client.subscribe(MQTT_TOPIC_COFFEE)
   
 def on_message(client, userdata, msg):
   epochtime = time.time()
