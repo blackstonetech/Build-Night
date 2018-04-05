@@ -1,6 +1,6 @@
 ## Smart Mirror
 
-### Ideas
+### Idea
 Smart Mirror
 
 ### Value - What does this solve?
