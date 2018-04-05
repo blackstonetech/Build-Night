@@ -13,4 +13,4 @@ Need monitor, mirror, and raspberry pi. Instructions to build are online, as are
 Looks sleek!
 
 ### How can your idea segway into other ideas?
-Can add/build more apps to be tailored to blackstone. Can also change the glass on the conference rooms to be smart mirrors/glass.
+Can add/build more apps to be tailored to Blackstone. Can also change the glass on the conference rooms to be smart mirrors/glass.
