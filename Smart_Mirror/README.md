@@ -1,4 +1,5 @@
 ## Smart Mirror
+POC: Ashley Swan
 
 ### Idea
 Smart Mirror
