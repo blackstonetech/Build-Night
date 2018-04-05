@@ -8,7 +8,7 @@ Smart Mirror
 Can put events, weather, other applications on it
 
 ### How?
-Need monitor, mirror, and raspberry pi. Instructions to build are online, as are many apps to put on the raspberry pi.
+Need monitor, mirror, and a raspberry pi. Instructions to build are online, as are many apps to put on the raspberry pi.
 
 ### Cool Factor
 Looks sleek!
