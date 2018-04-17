@@ -1,5 +1,6 @@
 ## Smart Mirror
 POC: Ashley Swan
+Contributer: Ankoni Lowman
 
 ### Idea
 Smart Mirror
