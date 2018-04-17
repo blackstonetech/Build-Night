@@ -17,10 +17,16 @@ Looks sleek!
 Can add/build more apps to be tailored to Blackstone. Can also change the glass on the conference rooms to be smart mirrors/glass.
 
 ### Next Steps
-- [ ] Materials?
 
+#### Materials List
 | Item | Cost | Links |
 | --- | --- | --- |
 | Mirror |  |  |
 | More things |  |  |
 | add more |  |  |
+
+#### Where will it be placed?
+
+
+#### Value?
+What are some places we can place the smart mirror which will allow our clients to interact?
