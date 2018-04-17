@@ -15,3 +15,9 @@ Looks sleek!
 
 ### How can your idea segue into other ideas?
 Can add/build more apps to be tailored to Blackstone. Can also change the glass on the conference rooms to be smart mirrors/glass.
+
+### Next Steps
+- [ ] Materials?
+
+| Item | Cost | Links |
+| --- | --- | --- |
