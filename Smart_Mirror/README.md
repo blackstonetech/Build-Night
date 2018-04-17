@@ -21,3 +21,6 @@ Can add/build more apps to be tailored to Blackstone. Can also change the glass 
 
 | Item | Cost | Links |
 | --- | --- | --- |
+| Mirror |  |  |
+| More things |  |  |
+| add more |  |  |
