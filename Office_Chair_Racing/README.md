@@ -14,4 +14,4 @@ Set up desks as race course - maybe cones.
 Racing is sexy!
 
 ### How can your idea segue into other ideas?
-Electric modified chair racing
+AI controlled chair racing
