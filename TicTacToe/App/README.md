@@ -1,5 +1,8 @@
 # App Based
 
+### Vision
+- Build a simple game app that will provide a platform to explore AI and build AI to play games against players.
+
 ### Requirements:
 - While on the BTG network players should be able to que for a match
 - The first and second players in the que should be put into a match
