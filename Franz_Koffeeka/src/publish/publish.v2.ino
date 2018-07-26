@@ -9,8 +9,11 @@ Blackstone Internet of Coffee Pub Sub Program
 #include <Wire.h>
 #include "Adafruit_TCS34725.h"
 
+#include "DHT.h" // temperature and humidity sensor
+#include "Adafruit_MLX90614.h" // temperature sensor
+
 /************** Temperature Sensor ***************/
-#include "Adafruit_MLX90614.h"
+
 Adafruit_MLX90614 mlx = Adafruit_MLX90614();
 
 #define INFO  0  /* basic to console */
@@ -24,7 +27,7 @@ int logLevel = WARN ;
 #define WLAN_PASS       "Black$tone45"
 
 /************************* MQTT Server Setup *********************************/
-#define AIO_SERVER      "192.168.3.82"
+#define AIO_SERVER      "192.168.3.189"
 #define AIO_SERVERPORT  1883                   // use 8883 for SSL
 #define AIO_USERNAME    ""
 #define AIO_KEY         ""
@@ -58,7 +61,6 @@ Adafruit_MQTT_Publish* logPublish = NULL;
 /** Feed for logging **/
 
 /************** DHT TempHumidity Sensor ***************/
-#include "DHT.h"
 #define DHTPIN 2     // what digital pin we're connected to
 #define DHTTYPE DHT22   // DHT 22  (AM2302), AM2321
 DHT dht(DHTPIN, DHTTYPE);
@@ -149,31 +151,6 @@ void loop() {
   }
 }
 
-  // Publish the sensor information following the string format requested by the display group.
-void mqtt_send(String data)
-{
-   if (! coffeePublish.publish(data.c_str())) {
- //   Serial.println(F("Failed"));
-    logmsg(F("Publish Data Message - FAILED"), INFO);
-  } else {
-    logmsg(F("Publish Data Message - OK!"), INFO);
-  }
-}
-
-void mqtt_debug_send(String data)
-{
-  int rc = 0;
-  if(logmqtt->connected()){
-//    if (! logPublish->publish(data.c_str())) {
-    rc = logPublish->publish(data.c_str());
-    logmsg(F("Publish Debug Message - FAILED"), INFO);
-    if (! rc ) {
-      logmsg(F("Publish Debug Message - FAILED"), INFO);
-    } else {
-      logmsg(F("Publish Debug Message - OK!"), INFO);
-    }
-  }
-}
 
 /**************************** Humidity Sensor Publish ************************************/
 char dhtSensor() {
@@ -267,6 +244,32 @@ void MQTT_connect(Adafruit_MQTT_Client mqtt_client, uint8_t retries) {
   }
   logmsg("MQTT Connected!", INFO);
 }
+
+// Publish the sensor information following the string format requested by the display group.
+void mqtt_send(String data)
+{
+   if (! coffeePublish.publish(data.c_str())) {
+    logmsg(F("Publish Data Message - FAILED"), INFO);
+  } else {
+    logmsg(F("Publish Data Message - OK!"), INFO);
+  }
+}
+
+void mqtt_debug_send(String data)
+{
+  int rc = 0;
+  if(logmqtt->connected()){
+//    if (! logPublish->publish(data.c_str())) {
+    rc = logPublish->publish(data.c_str());
+      logmsg(F("Publish Debug Message - FAILED"), INFO);
+    if (! rc ) {
+      logmsg(F("Publish Debug Message - FAILED"), INFO);
+    } else {
+      logmsg(F("Publish Debug Message - OK!"), INFO);
+    }
+  }
+}
+
 
 /**************************** Common Logging Service ************************************/
 void logmsg(String data, int logMsgLevel) {
