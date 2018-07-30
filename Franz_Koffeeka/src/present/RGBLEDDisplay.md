@@ -352,14 +352,8 @@ lowest PWM time (~3.4µs).
 However, we just ignore this 'black' time, and switch the row on and off after
 the clocking with the needed time-period; that way we get down to 200ns.
 
-[hub75]: ./img/hub75.jpg
-[matrix64]: ./img/chained-64x64.jpg
-[time]: ./img/time-display.jpg
-[pp-vid]: ./img/pixelpusher-vid.jpg
-[run-vid]: ./img/running-vid.jpg
 [pixelpush]: https://github.com/hzeller/rpi-matrix-pixelpusher
 [sparkfun]: https://www.sparkfun.com/products/12584
 [ada]: http://www.adafruit.com/product/1484
-[git-submodules]: http://git-scm.com/book/en/Git-Tools-Submodules
 [emlid-rt]: http://www.emlid.com/raspberry-pi-real-time-kernel-available-for-download/
 [rt-paper]: https://www.osadl.org/fileadmin/dam/rtlws/12/Brown.pdf
