@@ -7,8 +7,9 @@ import os, datetime, time
 from optparse import OptionParser
 
 SLEEP_INTERVAL = 1.0
-IDLE_LOOP_MAX = 5
-IMAGE_DISPLAY_DURATION = 2.0
+#IDLE_LOOP_MAX = 5
+IDLE_LOOP_MAX = 15 
+IMAGE_DISPLAY_DURATION = 1.0
 
 IMAGE_BLACK = 'Black.png'
 IMAGE_NONE = 'None'
@@ -120,7 +121,7 @@ def main():
     parser.add_option("-f", "--file", dest="csvfilename",
                   help="input csv file", metavar="FILE")
     parser.add_option("-q", "--quiet",
-                  action="store_false", dest="verbose", default=True,
+                  action="store_false", dest="quietmode", default=True,
                   help="don't print status messages to stdout")
     parser.add_option("-t", "--test",
                   action="store_true", dest="testmode", default=False,
@@ -139,9 +140,14 @@ def main():
     with open(csvFile, 'r') as fin:
 #        reader = csv.DictReader(fin, delimiter='|', fieldnames=fieldnames, restval='n')
         reader = csv.reader(fin, delimiter='|')
-        for line in reader:
+#        for line in reader:
+        for linex in fin:
+#        for line in csv.reader(linex, delimiter='|'):
+            linex = linex.rstrip('\r\n')
+            line = linex.split('|')
             row = dict(zip(fieldnames, line))
             print("read line==>" + str(line) + "<== #" + str(reader.line_num) )
+            print("read row==>" + str(row) + "<== #" + str(reader.line_num) )
             if options.testmode:
                 print("test line==>" + str(line) + "<== #" + str(reader.line_num) )
                 presentStatus(row)
@@ -153,31 +159,35 @@ def main():
         hold_line_num = reader.line_num
         loop_count = 0
         while True:
-            if loop_count > IDLE_LOOP_MAX :
+            if options.quietmode:
+              if loop_count > IDLE_LOOP_MAX :
                 print("Idle too long - exiting!")
                 break
            
             where = fin.tell()
-            line = fin.readline()
-            if not line:
+            linex = fin.readline()
+            if not linex:
                 print("in wait loop on line #" + str(reader.line_num))
                 time.sleep(SLEEP_INTERVAL)
                 loop_count += 1
                 continue
 
-            fin.seek(where)
-            line = next(reader)
+#            fin.seek(where)
+#            line = next(reader)
+#            linex = fin.readline()
+            linex = linex.rstrip('\r\n')
+            line = linex.split('|')
             row = dict(zip(fieldnames, line))
 
             print("next line==>" + str(line) + "<== #" + str(reader.line_num) )
             print("next row==>" + str(row) + "<== #" + str(reader.line_num) )
-            if reader.line_num == hold_line_num :
-                time.sleep(SLEEP_INTERVAL)
-                loop_count += 1
-            else:
-                presentStatus(row)
-                hold_line_num = reader.line_num
-                loop_count = 0
+##            if reader.line_num == hold_line_num :
+##                time.sleep(SLEEP_INTERVAL)
+##                loop_count += 1
+##            else:
+            presentStatus(row)
+            hold_line_num = reader.line_num
+            loop_count = 0
                 
 
 if __name__ == '__main__':
