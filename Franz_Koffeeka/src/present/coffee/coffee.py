@@ -7,7 +7,8 @@ import os, datetime, time
 from optparse import OptionParser
 
 SLEEP_INTERVAL = 1.0
-IDLE_LOOP_MAX = 5
+#IDLE_LOOP_MAX = 5
+IDLE_LOOP_MAX = 15 
 IMAGE_DISPLAY_DURATION = 1.0
 
 IMAGE_BLACK = 'Black.png'
