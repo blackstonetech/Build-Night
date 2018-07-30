@@ -21,7 +21,7 @@ CSV_FILE_PATH_TEST = '/home/pi/Federal-IoT/Franz_Koffeeka/src/present/coffee'
 CSV_FILE_NAME_TEST = 'testdata.csv'
 
 # myfile = "/home/pi/Federal-IoT/Franz_Koffeeka/src/present/coffee/testdata.txt"
-imgfilepath = "/home/pi/Federal-IoT/Franz_Koffeeka/src/present/Coffee Images/CoffeeExport/"
+imgfilepath = "/home/pi/Federal-IoT/Franz_Koffeeka/src/present/img/"
 
 left_image = [IMAGE_BLACK, IMAGE_BLACK, IMAGE_BLACK]
 right_image = [IMAGE_BLACK, IMAGE_NONE, IMAGE_NONE]
