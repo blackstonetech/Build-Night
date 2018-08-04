@@ -79,7 +79,7 @@ def assignMove(board, intPosition, player):
             count += 1
             if count == intPosition:
                 board[i][j] = player
-                print("player assigned")
+                #print("player assigned")
 
 def displayBanner():
 
