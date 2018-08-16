@@ -17,3 +17,11 @@
 - Design Pitch and questions: 10mins  
 - Open Discussion: 20mins
 - Update project plan with basic outline of work to be completed and potentially start.
+
+### Build Night 2
+- Add colors think WarGames
+- AI Work
+- Renumber panels to be the same as an actual number pad  
+1 | 2 | 3  
+4 | 5 | 6  
+7 | 8 | 9  
