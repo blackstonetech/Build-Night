@@ -1,5 +1,6 @@
 from manualagent import *
 from randomagent import *
+from qagent import *
 from game import *
 from utils import *
 import sys
@@ -13,6 +14,11 @@ import sys
 # Ask if users want to play again
 
 displayBanner()
+def PlayNGames(N,agentX, agentO):
+    for _ in range(0,N):
+        game = Game(agentX,agentO)
+        game.PlaySilentGame()
+        #print("result: ", game.PlaySilentGame())
 
 if len(sys.argv) == 1:
     game = Game(RandomAgent('X'),RandomAgent('O'))
@@ -24,6 +30,20 @@ else:
     elif sys.argv[1] == 'mr':
         game = Game(ManualAgent('X'),RandomAgent('O'))
         print("result: ", game.PlayGame())
-    elif sys.argv[1] == 'rr':
-        game = Game(RandomAgent('X'),RandomAgent('O'))
+    elif sys.argv[1] == 'rq':
+        aX = RandomAgent('X')
+        aO = QAgent('O')
+        PlayNGames(int(sys.argv[2]),aX,aO)
+        print("aX wins:", aX.Wins)
+        print("aO wins:", aO.Wins)
+        # print("Mem:", aO.Memory)
+        game = Game(ManualAgent('X'),aO)
         print("result: ", game.PlayGame())
+    elif sys.argv[1] == 'rr':
+        aX = RandomAgent('X')
+        aO = RandomAgent('O')
+        PlayNGames(int(sys.argv[2]),aX,aO)
+        print("aX wins:", aX.Wins)
+        print("aO wins:", aO.Wins)
+
+
