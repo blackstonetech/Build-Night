@@ -1,3 +1,5 @@
+import json
+
 def displayBanner():
 
     print("  _______         ______              ______ ")
@@ -55,23 +57,13 @@ def checkWinsDiagonal(board, player):
 
     return False
 
-def store(board, path="board.bd"):
-    boardFile = open(path, "w+")
-    for key in board:
-        boardFile.write(key)
-        boardFile.write(",")
-        boardFile.write(board[key])
-        boardFile.write("\n")
-    boardFile.close()
+def store(memDump, path="memDump.json"):
+    dump = json.dumps(memDump)
+    f = open(path, "w+")
+    f.write(dump)
+    f.close()
 
-def load(path="board.bd"):
-    boardFile = open(path, "r")
-    board = dict()
-    line = boardFile.readline()
-    while line:
-        key = line.split(",")[0]
-        value = line.split(",")[1]
-        board[key] = value
-        line = boardFile.readline()
-    boardFile.close()
-    return board
+def load(path="memDump.json"):
+    f = open(path, "r")
+    memDump = json.load(f)
+    return memDump
