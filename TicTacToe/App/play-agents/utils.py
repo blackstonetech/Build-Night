@@ -54,3 +54,24 @@ def checkWinsDiagonal(board, player):
         return True
 
     return False
+
+def store(board, path="board.bd"):
+    boardFile = open(path, "w+")
+    for key in board:
+        boardFile.write(key)
+        boardFile.write(",")
+        boardFile.write(board[key])
+        boardFile.write("\n")
+    boardFile.close()
+
+def load(path="board.bd"):
+    boardFile = open(path, "r")
+    board = dict()
+    line = boardFile.readline()
+    while line:
+        key = line.split(",")[0]
+        value = line.split(",")[1]
+        board[key] = value
+        line = boardFile.readline()
+    boardFile.close()
+    return board

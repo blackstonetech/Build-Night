@@ -1,10 +1,11 @@
 from player import *
+from board_memory import *
 import random
 import threading
 class QAgent(Player):
     def __init__(self, name):
         super().__init__(name)
-        self.Memory = {}
+        self.Memory = board_memory.load()
         self.CurrentMove = (-1,-1)
         self.lock = threading.Lock()
 
