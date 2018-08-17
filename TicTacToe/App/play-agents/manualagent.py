@@ -17,7 +17,12 @@ class ManualAgent(Player):
         self.Name = name
 
     def GetMove(self, board):
-        return converter.get(input('Make a move (number between 1 and 9):  '))
+        while True:
+            try:
+                a = tuple(converter.get(input('Make a move (number between 1 and 9):  ')))
+                return a
+            except:
+                pass
 
 
     def SendGameOverMessage(self, result):
