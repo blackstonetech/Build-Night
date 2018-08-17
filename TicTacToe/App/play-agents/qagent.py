@@ -1,10 +1,12 @@
 from player import *
 import random
+import threading
 class QAgent(Player):
     def __init__(self, name):
         super().__init__(name)
         self.Memory = {}
         self.CurrentMove = (-1,-1)
+        self.lock = threading.Lock()
 
     def GetLeagalMoves(self, board):
         moves = []
@@ -23,7 +25,7 @@ class QAgent(Player):
         # always exploring, no policy yet
         # This is where the policy code would go
         # m = random.choice(legalMoves)
-        m = legalMoves[0]
+        m = random.choice(legalMoves)
         for c in legalMoves:
             if self.GetQValueOfMove(c,board) > self.GetQValueOfMove(m,board):
                 m = c
@@ -46,8 +48,8 @@ class QAgent(Player):
             reward = 1
         else:
             reward = -1
-
-        self.Memory[self.BoardAndMovetoString(board,self.CurrentMove)] = reward
+        with self.lock:
+            self.Memory[self.BoardAndMovetoString(board,self.CurrentMove)] = reward
         #print(self.Memory)
 
     def BoardAndMovetoString(self, board, move):
@@ -59,14 +61,14 @@ class QAgent(Player):
 
     def UpdateQval(self, board, state, nextstate):
         #print(state, self.Memory.get(state), nextstate, self.Memory.get(nextstate))
-
-        if self.Memory.get(nextstate, False) and self.Memory.get(state, False):
-            self.Memory[state] = self.Memory.get(state) + 0.9*(self.Memory.get(nextstate) - self.Memory.get(state))
-        else:
-            if self.Memory.get(nextstate, True):
-                self.Memory[nextstate] = 0.1
-            if self.Memory.get(state, True):
-                self.Memory[state] = 0.1
+        with self.lock:
+            if self.Memory.get(nextstate, False) and self.Memory.get(state, False):
+                self.Memory[state] = self.Memory.get(state) + 0.9*(self.Memory.get(nextstate) - self.Memory.get(state))
+            else:
+                if self.Memory.get(nextstate, True):
+                    self.Memory[nextstate] = 0.0
+                if self.Memory.get(state, True):
+                    self.Memory[state] = 0.0
             
 
         # try:

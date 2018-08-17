@@ -36,6 +36,23 @@ class Game:
 
         return result
 
+    def PlaySilentGame(self):
+        result = self.CheckGameOver()
+        currentPlayer = self.AgentX
+        while result == 'Continue':
+            x,y = currentPlayer.GetMove(self.Board)
+            # check valid move
+            while self.CheckValid(x,y) != True:
+                x,y = currentPlayer.GetMove(self.Board)
+
+            self.Board[x][y] = currentPlayer.Name
+            currentPlayer = self.AgentO if currentPlayer == self.AgentX else self.AgentX
+            result = self.CheckGameOver()
+
+        self.AgentO.SendGameOverMessage(result,self.Board)
+        self.AgentX.SendGameOverMessage(result, self.Board)
+        return result
+
     def CheckGameOver(self):
         #from utils
         return checkGameOver(self.Board)
