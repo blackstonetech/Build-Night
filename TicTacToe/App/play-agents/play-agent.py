@@ -14,6 +14,17 @@ import sys
 # Ask if users want to play again
 
 displayBanner()
+
+def PlayGameThread(agentX, agentO):
+    game = Game(agentX,agentO)
+    game.PlaySilentGame()
+
+def PlayNGamesThreaded(N,agentX, agentO):
+    for _ in range(0,N):
+        t = threading.Thread(None,PlayGameThread(agentX,agentO))
+        t.start()
+    
+
 def PlayNGames(N,agentX, agentO):
     for _ in range(0,N):
         game = Game(agentX,agentO)
@@ -33,16 +44,16 @@ else:
     elif sys.argv[1] == 'rq':
         aX = RandomAgent('X')
         aO = QAgent('O')
-        PlayNGames(int(sys.argv[2]),aX,aO)
+        PlayNGamesThreaded(int(sys.argv[2]),aX,aO)
         print("aX wins:", aX.Wins)
         print("aO wins:", aO.Wins)
-        # print("Mem:", aO.Memory)
+        print("Mem:", aO.Memory)
         game = Game(ManualAgent('X'),aO)
         print("result: ", game.PlayGame())
     elif sys.argv[1] == 'rr':
         aX = RandomAgent('X')
         aO = RandomAgent('O')
-        PlayNGames(int(sys.argv[2]),aX,aO)
+        PlayNGamesThreaded(int(sys.argv[2]),aX,aO)
         print("aX wins:", aX.Wins)
         print("aO wins:", aO.Wins)
 
