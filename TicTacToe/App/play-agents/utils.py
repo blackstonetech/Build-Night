@@ -80,7 +80,7 @@ def combine(source, overwrite):
         # get the value in source
         s = source[key]
         # find the same key in overwrite
-        o = overwrite[key]
+        o = overwrite.get(key, 0)
         # if source == 0, substitute for the value in overwrite
         if (s == 0 and o != 0):
             output[key] = o
@@ -91,4 +91,5 @@ def combine(source, overwrite):
         else:
             output[key] = s
     return output
+
 
