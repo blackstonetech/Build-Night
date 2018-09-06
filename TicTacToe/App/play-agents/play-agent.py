@@ -3,6 +3,7 @@ from randomagent import *
 from qagent import *
 from game import *
 from utils import *
+from evo_agent import *
 import sys, threading
 # Take in cmd args
 # Setup game
@@ -106,6 +107,25 @@ else:
         print("result: ", game.PlayGame())
         store(aX.Memory)
         print("mem length:", len(aX.Memory))
+
+#needs to take filename for orig data
+    elif sys.argv[1] == 'qe':
+
+        try:
+            qeInput = sys.argv[2]
+            run(sys.argv[2])
+        except IndexError:
+            origScore = "origScore.json"
+            aX = QAgent('X')
+            aO = RandomAgent('O')
+            PlayNGamesThreaded(1000, aX, aO)
+            print("aX wins:", aX.Wins)
+            print("aO wins:", aO.Wins)
+            # print("Mem:", aO.Memory)
+            game = Game(RandomAgent('X'), aO)
+            print("result: ", game.PlayGame())
+            storeOrig(aX.Memory)
+            print("mem length:", len(aX.Memory))
 
     elif sys.argv[1] == 'qq':
         aX = QAgent('X')

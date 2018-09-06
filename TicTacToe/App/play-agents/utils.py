@@ -63,6 +63,12 @@ def store(memDump, path="memDump.json"):
     f.write(dump)
     f.close()
 
+def storeOrig(memDump, path="origScore.json"):
+    dump = json.dumps(memDump)
+    f = open(path, "w+")
+    f.write(dump)
+    f.close()
+
 def load(path="memDump.json"):
     f = open(path, "r")
     memDump = json.load(f)
