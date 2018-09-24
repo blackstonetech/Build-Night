@@ -141,5 +141,19 @@ else:
         print("result: ", game.PlayGame())
         store(aO.Memory)
         print("mem length:", len(aO.Memory))
+    elif sys.argv[1] == 'train':
+        aX = RandomAgent('X')
+        aO = QAgent('O')
+        p = Population(int(sys.argv[2]), float(sys.argv[3]), aO)
+        p.RunGenerations(int(sys.argv[4]))
+        aO = p.Best
+        #PlayNGamesThreaded(int(sys.argv[2]),aX,aO)
+        # print("aX wins:", aX.Wins)
+        # print("aO wins:", aO.Wins)
+        #print("Mem:", aO.Memory)
+        # game = Game(ManualAgent('X'),aO)
+        # print("result: ", game.PlayGame())
+        store(aO.Memory)
+        print("mem length:", len(aO.Memory))
 
 
