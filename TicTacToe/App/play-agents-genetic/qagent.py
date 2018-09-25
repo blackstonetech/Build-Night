@@ -6,6 +6,7 @@ class QAgent(Player):
     def __init__(self, name):
         super().__init__(name)
         try:
+            #filePrefix = '/home/ec2-user/'
             self.Memory = load()
         except:
             self.Memory = {}

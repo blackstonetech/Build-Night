@@ -5,7 +5,7 @@ from qagent import *
 from game import *
 from population import *
 from utils import *
-import sys, threading
+import sys, threading, datetime
 # Take in cmd args
 # Setup game
 #   Choose agent to play the game
@@ -17,6 +17,9 @@ import sys, threading
 
 displayBanner()
 random.seed()
+test = {}
+test['start_time'] = str(datetime.datetime.now())
+store(test, 'time.json')
 
 class myThread (threading.Thread):
    def __init__(self, threadID, agentX, agentO):
@@ -51,7 +54,7 @@ def PlayNGames(N,agentX, agentO):
         game = Game(agentX,agentO)
         game.PlaySilentGame()
         #print("result: ", game.PlaySilentGame())
-
+filePrefix = '/home/ec2-user/'
 # START EXECUTION
 if len(sys.argv) == 1:
     game = Game(RandomAgent('X'),RandomAgent('O'))
