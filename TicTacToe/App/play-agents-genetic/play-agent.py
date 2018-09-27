@@ -19,6 +19,9 @@ displayBanner()
 random.seed()
 test = {}
 test['start_time'] = str(datetime.datetime.now())
+params = {}
+params['argvs'] = sys.argv
+test['parameters'] = params
 store(test, 'time.json')
 
 class myThread (threading.Thread):
@@ -157,6 +160,6 @@ else:
         # game = Game(ManualAgent('X'),aO)
         # print("result: ", game.PlayGame())
         store(aO.Memory)
-        print("mem length:", len(aO.Memory))
+        #print("mem length:", len(aO.Memory))
 
 

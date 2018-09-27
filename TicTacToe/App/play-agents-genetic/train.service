@@ -5,7 +5,7 @@ After=network.target
 [Service]
 WorkingDirectory=/tmp/
 Type=simple
-ExecStart=/usr/bin/python3 /home/ec2-user/Build-Night/TicTacToe/App/play-agents-genetic/play-agent.py train 100 100 100
+ExecStart=/usr/bin/python3.7 /home/ec2-user/Build-Night/TicTacToe/App/play-agents-genetic/play-agent.py train 40 10 5
 Restart=always
 
 

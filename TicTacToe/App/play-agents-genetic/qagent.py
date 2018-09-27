@@ -66,7 +66,7 @@ class QAgent(Player):
 
     def Mutate(self, mutationRate):
         NewMemory = {}
-        rewards = [-1,1,2]
+        rewards = [-2,-1,10]
         for board in self.Memory:
             moves = self.Memory.get(board, False)
             mutatedMoves = {}
