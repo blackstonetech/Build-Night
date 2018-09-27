@@ -32,6 +32,7 @@ class Population():
         dataPoint = {}
         bestscore = self.AssesFitness(RandomAgent('X'), self.Best, 10000)
         dataPoint['original-baseline'] = bestscore
+        allgenerationdata = []
         for i in range(0, generations):
             scores = []
             # store(self.Best.Memory, "memDump_"+ str(bestScore) + ".json")
@@ -52,13 +53,17 @@ class Population():
 
             generation['scores'] = scores
             generation['most-fit'] = bestscore
-            dataPoint['generation-'+str(i)] = generation
+            allgenerationdata.append(generation)
+        dataPoint['generations'] = allgenerationdata
         dataPoint['new-baseline'] = bestscore
         # write data point
         self.Viz_data[str(datetime.datetime.now())] = dataPoint
         store(self.Viz_data,'VizData.json')
-        s = boto3.client('sns', region_name='us-east-1')
-        s.publish(Message='Current Score: ' + str(bestscore), PhoneNumber='+13015025813')
+        try:
+            s = boto3.client('sns', region_name='us-east-1')
+            s.publish(Message='Current Score: ' + str(bestscore), PhoneNumber='+13015025813')
+        except:
+            print("Could not send text update")
         return self.Best
     
 
