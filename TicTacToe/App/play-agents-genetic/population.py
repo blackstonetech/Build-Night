@@ -1,7 +1,7 @@
 from utils import *
 from game import *
 from qagent import *
-import random, boto3
+import random, boto3, datetime
 from randomagent import *
 
 class Population():
@@ -24,20 +24,41 @@ class Population():
         return score
 
     def RunGenerations(self, generations):
-        bestScore = self.AssesFitness(RandomAgent('X'), self.Best, 10000)
-        print("before score", bestScore)
-        for i in range(0,generations):
-            s = boto3.client('sns', region_name='us-east-1')
-            s.publish(Message='Current Score: '+ str(bestScore), PhoneNumber='+13015025813')
-            store(self.Best.Memory, "memDump_"+ str(bestScore) + ".json")
-            for a in range(0,self.Popsize):
+        try:
+            #filePrefix = '/home/ec2-user/'
+            self.Viz_data = load('VizData.json')
+        except:
+            self.Viz_data = {}
+        dataPoint = {}
+        bestscore = self.AssesFitness(RandomAgent('X'), self.Best, 10000)
+        dataPoint['original-baseline'] = bestscore
+        for i in range(0, generations):
+            scores = []
+            # store(self.Best.Memory, "memDump_"+ str(bestScore) + ".json")
+            agents = []
+            generation = {}
+            for a in range(0, self.Popsize):
+                #make agents
                 muteagent = QAgent('O')
-                score = self.AssesFitness(RandomAgent('X'), muteagent, 10000)
                 muteagent.Memory = self.Best.Mutate(self.mutationRate)
-                if  score > bestScore:
-                    bestScore = score
-                    self.Best = muteagent
-        print("after score", bestScore)
+                agents.append(muteagent)
+
+            for b in range(0, self.Popsize):
+                score = self.AssesFitness(RandomAgent('X'), agents[b], 10000)
+                scores.append(score)
+                if score > bestscore:
+                    bestscore = score
+                    self.Best = agents[b]
+
+            generation['scores'] = scores
+            generation['most-fit'] = bestscore
+            dataPoint['generation-'+str(i)] = generation
+        dataPoint['new-baseline'] = bestscore
+        # write data point
+        self.Viz_data[str(datetime.datetime.now())] = dataPoint
+        store(self.Viz_data,'VizData.json')
+        s = boto3.client('sns', region_name='us-east-1')
+        s.publish(Message='Current Score: ' + str(bestscore), PhoneNumber='+13015025813')
         return self.Best
     
 
