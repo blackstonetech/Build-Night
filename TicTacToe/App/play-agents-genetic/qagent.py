@@ -66,15 +66,19 @@ class QAgent(Player):
 
     def Mutate(self, mutationRate):
         NewMemory = {}
-        rewards = [-2,-1,10]
+        #rewards = [-2,-1,2]
         for board in self.Memory:
             moves = self.Memory.get(board, False)
-            mutatedMoves = {}
-            for m in moves:
-                if mutationRate > random.uniform(0, 1):
-                    mutatedMoves[m] = moves.get(m, False) + random.choice(rewards)
-                else:
-                    mutatedMoves[m] = moves.get(m,0)
+            mutatedMoves = moves
+            i = random.choice([*moves])
+            mutatedMoves[i] = mutatedMoves[i] + 1
+
+            #for m in moves:
+                #mutatedMoves
+                # if mutationRate > random.uniform(0, 1):
+                #     mutatedMoves[m] = moves.get(m, False) + random.choice(rewards)
+                # else:
+                #     mutatedMoves[m] = moves.get(m,0)
             NewMemory[board] = mutatedMoves
         return NewMemory
             

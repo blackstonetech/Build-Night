@@ -150,7 +150,7 @@ else:
     elif sys.argv[1] == 'train':
         aX = RandomAgent('X')
         aO = QAgent('O')
-        p = Population(int(sys.argv[2]), float(sys.argv[3]), aO)
+        p = Population(int(sys.argv[2]), int(sys.argv[3]), aO)
         p.RunGenerations(int(sys.argv[4]))
         aO = p.Best
         #PlayNGamesThreaded(int(sys.argv[2]),aX,aO)

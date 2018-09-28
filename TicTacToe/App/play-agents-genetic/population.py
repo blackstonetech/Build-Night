@@ -5,10 +5,10 @@ import random, boto3, datetime
 from randomagent import *
 
 class Population():
-    def __init__(self, size, mutationRate, originalAgent):
+    def __init__(self, size, fit, originalAgent):
         self.Best = originalAgent
         self.Popsize = size
-        self.mutationRate = mutationRate
+        self.FitnessTest = fit
 
     def AssesFitness(self, agentX, agentO, trials):
         score = 0
@@ -30,7 +30,7 @@ class Population():
         except:
             self.Viz_data = {}
         dataPoint = {}
-        bestscore = self.AssesFitness(RandomAgent('X'), self.Best, 10000)
+        bestscore = self.AssesFitness(RandomAgent('X'), self.Best, self.FitnessTest)
         dataPoint['original-baseline'] = bestscore
         allgenerationdata = []
         for i in range(0, generations):
@@ -41,11 +41,11 @@ class Population():
             for a in range(0, self.Popsize):
                 #make agents
                 muteagent = QAgent('O')
-                muteagent.Memory = self.Best.Mutate(self.mutationRate)
+                muteagent.Memory = self.Best.Mutate(0)
                 agents.append(muteagent)
 
             for b in range(0, self.Popsize):
-                score = self.AssesFitness(RandomAgent('X'), agents[b], 10000)
+                score = self.AssesFitness(RandomAgent('X'), agents[b], self.FitnessTest)
                 scores.append(score)
                 if score > bestscore:
                     bestscore = score
@@ -58,7 +58,7 @@ class Population():
         dataPoint['new-baseline'] = bestscore
         # write data point
         self.Viz_data[str(datetime.datetime.now())] = dataPoint
-        store(self.Viz_data,'VizData.json')
+        store(self.Viz_data, 'VizData.json')
         try:
             s = boto3.client('sns', region_name='us-east-1')
             s.publish(Message='Current Score: ' + str(bestscore), PhoneNumber='+13015025813')
