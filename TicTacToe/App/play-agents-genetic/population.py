@@ -41,16 +41,17 @@ class Population():
             for a in range(0, self.Popsize):
                 #make agents
                 muteagent = QAgent('O')
-                muteagent.Memory = self.Best.Mutate(0)
+                muteagent.Memory = self.Best.Mutate()
+                #print("Mutating to make new agent self.Best.Memory:", self.Best.Memory)
                 agents.append(muteagent)
-
+            #print(agents)
             for b in range(0, self.Popsize):
                 score = self.AssesFitness(RandomAgent('X'), agents[b], self.FitnessTest)
                 scores.append(score)
                 if score > bestscore:
                     bestscore = score
                     self.Best = agents[b]
-
+            #print("Final selection of generation:",self.Best.Memory)
             generation['scores'] = scores
             generation['most-fit'] = bestscore
             allgenerationdata.append(generation)

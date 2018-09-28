@@ -1,7 +1,7 @@
 from player import *
 from utils import load
 import random
-import threading
+import threading, copy
 class QAgent(Player):
     def __init__(self, name):
         super().__init__(name)
@@ -64,13 +64,13 @@ class QAgent(Player):
                     moves[str(m)] = 0
                 self.Memory[self.bts(board)] = moves
 
-    def Mutate(self, mutationRate):
-        NewMemory = {}
+    def Mutate(self):
+        NewMemory = copy.deepcopy(self.Memory)
         #rewards = [-2,-1,2]
-        for board in self.Memory:
-            moves = self.Memory.get(board, False)
+        for board in NewMemory:
+            moves = NewMemory.get(board, False)
             mutatedMoves = moves
-            i = random.choice([*moves])
+            i = random.choice([*mutatedMoves])
             mutatedMoves[i] = mutatedMoves[i] + 1
 
             #for m in moves:
@@ -80,6 +80,8 @@ class QAgent(Player):
                 # else:
                 #     mutatedMoves[m] = moves.get(m,0)
             NewMemory[board] = mutatedMoves
+        #print(NewMemory)
+        #print(self.Memory)
         return NewMemory
             
 
