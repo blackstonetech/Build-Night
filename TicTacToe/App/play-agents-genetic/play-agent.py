@@ -136,9 +136,9 @@ else:
     elif sys.argv[1] == 'me':
         aX = RandomAgent('X')
         aO = QAgent('O')
-        p = Population(int(sys.argv[2]), float(sys.argv[3]), aO)
-        p.RunGenerations(int(sys.argv[4]))
-        aO = p.Best
+        #p = Population(int(sys.argv[2]), float(sys.argv[3]), aO)
+        #p.RunGenerations(int(sys.argv[4]))
+        #aO = p.Best
         #PlayNGamesThreaded(int(sys.argv[2]),aX,aO)
         # print("aX wins:", aX.Wins)
         # print("aO wins:", aO.Wins)
