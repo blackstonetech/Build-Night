@@ -127,5 +127,5 @@ def show():
     #, color='r')
     fig.autofmt_xdate()
     plt.show()
-    plt.savefig('viz.png', bbox_inches='tight')
+    #ax.savefig('viz.png', bbox_inches='tight')
 

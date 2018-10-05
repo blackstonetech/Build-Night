@@ -85,7 +85,7 @@ class Population():
         store(self.Viz_data, 'VizData.json')
         try:
             s = boto3.client('sns', region_name='us-east-1')
-            s.publish(Message='Current Score: ' + str(bestscore), PhoneNumber='+13015025813')
+            s.publish(Message='Current' + str(self.Best.Name) + ' Score: ' + str(bestscore), PhoneNumber='+13015025813')
         except:
             print("Could not send text update")
         return self.Best
