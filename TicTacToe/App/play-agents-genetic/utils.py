@@ -1,4 +1,6 @@
 import json
+import datetime
+import matplotlib.pyplot as plt
 
 def displayBanner():
 
@@ -86,3 +88,44 @@ def combine(source, overwrite):
         else:
             output[key] = s
     return output
+
+def show():
+    VizData = {}
+    f = open('VizData.json', "r")
+    VizData = json.load(f)
+    dates = [*VizData]
+    FixedDates = []
+    for d in dates:
+        FixedDates.append(datetime.datetime.strptime(d, "%Y-%m-%d %H:%M:%S.%f"))
+
+    XNew = []
+    XOrig = []
+    ONew = []
+    OOrig = []
+    datesX = []
+    datesO = []
+
+    for date in FixedDates:
+        data = VizData.get(str(date), False)
+        #print(date, data)
+        if data:
+            if data.get('agent-name', False) == 'O':
+                datesO.append(date)
+                ONew.append(data.get('new-baseline', False))
+                OOrig.append(data.get('original-baseline', False))
+            elif data.get('agent-name', False) == 'X':
+                datesX.append(date)
+                XNew.append(data.get('new-baseline', False))
+                XOrig.append(data.get('original-baseline', False))
+
+    fig, ax = plt.subplots()
+    ax.xaxis_date()
+    ax.plot_date(datesX, XNew, fmt='go-', color='g')
+    ax.plot_date(datesO, ONew, fmt='go:')
+    # ax.plot_date(datesX, XOrig, fmt='ro-')
+    # ax.plot_date(datesO, OOrig, fmt='ro:')
+    #, color='r')
+    fig.autofmt_xdate()
+    plt.show()
+    plt.savefig('viz.png', bbox_inches='tight')
+

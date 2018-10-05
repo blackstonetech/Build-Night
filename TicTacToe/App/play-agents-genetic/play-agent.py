@@ -1,11 +1,12 @@
 from manualagent import *
 from randomagent import *
 from qagent import *
-#from evoagent import *
 from game import *
 from population import *
 from utils import *
 import sys, threading, datetime
+import matplotlib.pyplot as plt
+import json
 # Take in cmd args
 # Setup game
 #   Choose agent to play the game
@@ -57,7 +58,7 @@ def PlayNGames(N,agentX, agentO):
         game = Game(agentX,agentO)
         game.PlaySilentGame()
         #print("result: ", game.PlaySilentGame())
-filePrefix = '/home/ec2-user/'
+# filePrefix = '/home/ec2-user/'
 # START EXECUTION
 if len(sys.argv) == 1:
     game = Game(RandomAgent('X'),RandomAgent('O'))
@@ -134,11 +135,11 @@ else:
         print("aO wins:", aO.Wins)
 
     elif sys.argv[1] == 'me':
-        aX = RandomAgent('X')
+        # aX = RandomAgent('X')
         aO = QAgent('O')
-        p = Population(int(sys.argv[2]), float(sys.argv[3]), aO)
-        p.RunGenerations(int(sys.argv[4]))
-        aO = p.Best
+        # p = Population(int(sys.argv[2]), float(sys.argv[3]), aO)
+        # p.RunGenerations(int(sys.argv[4]))
+        # aO = p.Best
         #PlayNGamesThreaded(int(sys.argv[2]),aX,aO)
         # print("aX wins:", aX.Wins)
         # print("aO wins:", aO.Wins)
@@ -147,19 +148,36 @@ else:
         print("result: ", game.PlayGame())
         store(aO.Memory)
         print("mem length:", len(aO.Memory))
-    elif sys.argv[1] == 'train':
+    elif sys.argv[1] == 'trainO':
         aX = RandomAgent('X')
         aO = QAgent('O')
         p = Population(int(sys.argv[2]), int(sys.argv[3]), aO)
-        p.RunGenerations(int(sys.argv[4]))
-        aO = p.Best
-        #PlayNGamesThreaded(int(sys.argv[2]),aX,aO)
-        # print("aX wins:", aX.Wins)
-        # print("aO wins:", aO.Wins)
-        #print("Mem:", aO.Memory)
-        # game = Game(ManualAgent('X'),aO)
-        # print("result: ", game.PlayGame())
+        aO = p.RunGenerations(int(sys.argv[4]), aX)
         store(aO.Memory)
-        #print("mem length:", len(aO.Memory))
+        print("mem length:", len(aO.Memory))
+    elif sys.argv[1] == 'trainX':
+        aX = QAgent('X')
+        aO = RandomAgent('O')
+        p = Population(int(sys.argv[2]), int(sys.argv[3]), aX)
+        aX = p.RunGenerations(int(sys.argv[4]), aO)
+        store(aX.Memory)
+        print("mem length:", len(aX.Memory))
+    elif sys.argv[1] == 'trainXO':
+        print("Training X")
+        aX = QAgent('X')
+        aO = QAgent('O')
+        p = Population(int(sys.argv[2]), int(sys.argv[3]), aX)
+        aX = p.RunGenerations(int(sys.argv[4]), aO)
+        store(aX.Memory)
+        print("mem length:", len(aX.Memory))
+        print("Training O")
+        aX = QAgent('X')
+        aO = QAgent('O')
+        p = Population(int(sys.argv[2]), int(sys.argv[3]), aO)
+        aO = p.RunGenerations(int(sys.argv[4]), aX)
+        store(aO.Memory)
+        print("mem length:", len(aO.Memory))
 
+if sys.argv[len(sys.argv) - 1] == 'show':
+    show()
 

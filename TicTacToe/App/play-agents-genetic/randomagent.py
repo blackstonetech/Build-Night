@@ -14,7 +14,7 @@ class RandomAgent(Player):
             x = random.randint(0,2)
             y = random.randint(0,2)
             if board[x][y] != 'X' and board[x][y] != 'O':
-                return x,y
+                return x, y
 
     def PlayAgain(self):
         return True
